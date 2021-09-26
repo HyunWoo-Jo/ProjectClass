@@ -14,7 +14,10 @@ namespace Scene {
         [SerializeField]
         private BlockSpawner blockSpawner;
         [SerializeField]
-        private ButtonController buttonController; 
+        private ButtonController buttonController;
+
+        [SerializeField]
+        private Transform blockTarget;
 
         public List<Color> leftColorList = new List<Color>();
         public List<Color> rightColorList = new List<Color>();
@@ -28,6 +31,7 @@ namespace Scene {
             for (int i = 0; i < 3; i++) {
                 Block block = SpawnBlock();
             }
+            SetBlockPos();
         }
 
         /// <summary>
@@ -117,6 +121,8 @@ namespace Scene {
         private void SuccesButton() {
 
             ReturnBlock();
+            SpawnBlock();
+            BlockMove2Target();
         }
 
         /// <summary>
@@ -131,5 +137,21 @@ namespace Scene {
             blockListInField.RemoveAt(0);
         }
 
+        private void SetBlockPos() {
+            for (int i = 0; i < blockListInField.Count; i++) {
+                Vector3 pos = blockListInField[i].transform.position - blockTarget.transform.position;
+                Vector3 targetPos = blockTarget.transform.position + (pos.normalized * i);
+                blockListInField[i].gameObject.transform.position = targetPos;
+            }
+        }
+        private void BlockMove2Target() {
+            for (int i = 0; i < blockListInField.Count; i++) {
+                Vector3 pos = blockListInField[i].transform.position - blockTarget.transform.position;
+                Vector3 targetPos = blockTarget.transform.position + (pos.normalized * i);
+                var tween = LeanTween.move(blockListInField[i].gameObject, targetPos, 0.1f);
+                tween.setEase(LeanTweenType.easeInQuad);
+               
+            }
+        }
     }
 }
