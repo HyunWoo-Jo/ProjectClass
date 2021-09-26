@@ -9,15 +9,20 @@ namespace DesignStruct {
         public GameObject poolObject;
 
         private List<GameObject> poolObjectList;
-        private bool isAutoInstance;
-        private int instanceCount;
+        [SerializeField]
+        private bool isAutoInstance = true;
+        [SerializeField]
+        private int instanceCount = 5;
 
 
-        private void Start() {
+        private void Awake() {
             Init();
         }
         private void Init() {
             poolObjectList = new List<GameObject>();
+            if (isAutoInstance) {
+                AddObject(instanceCount);
+            }
         }
 
         private void AddObject(int count) {
@@ -26,6 +31,7 @@ namespace DesignStruct {
                 obj.transform.SetParent(this.transform);
 
                 poolObjectList.Add(obj);
+                obj.AddComponent<ObjectPoolItem>().Init(this);
                 obj.SetActive(false);
             }
         }
@@ -36,7 +42,7 @@ namespace DesignStruct {
             }
             GameObject obj = poolObjectList[0];
             poolObjectList.RemoveAt(0);
-
+            obj.SetActive(true);
             return obj;
         }
         public T TakeObject<T>() {
@@ -45,6 +51,7 @@ namespace DesignStruct {
             }
             GameObject obj = poolObjectList[0];
             poolObjectList.RemoveAt(0);
+            obj.SetActive(true);
             return obj.GetComponent<T>();
         }
          
