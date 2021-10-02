@@ -22,6 +22,8 @@ namespace Scene {
         public List<Color> leftColorList = new List<Color>();
         public List<Color> rightColorList = new List<Color>();
 
+        public Monster monster; //2021.10.03 추가
+
         private void Awake() {
             Init();
 
@@ -119,6 +121,8 @@ namespace Scene {
         /// 같은 색 버튼 클릭 성공
         /// </summary>
         private void SuccesButton() {
+
+            monster.GetDamage(10f); //임시 2021.10.03 추가
 
             ReturnBlock();
             SpawnBlock();
