@@ -1,4 +1,5 @@
 ///작성일 21.09.26
+///최종 수정일 21.10.05
 ///작성자 조현우
 using System.Collections;
 using System.Collections.Generic;
@@ -8,6 +9,7 @@ using Spawner;
 using UI_Controller;
 namespace Scene {
     public class GameScene : MonoBehaviour {
+        #region Property
         [HideInInspector]
         public List<Block> blockListInField = new List<Block>();
 
@@ -23,7 +25,9 @@ namespace Scene {
         public List<Color> rightColorList = new List<Color>();
 
         public Monster monster; //2021.10.03 추가
+        #endregion
 
+        #region Unity Method
         private void Awake() {
             Init();
 
@@ -35,7 +39,9 @@ namespace Scene {
             }
             SetBlockPos();
         }
+        #endregion
 
+        #region GameLogic
         /// <summary>
         /// 초기화
         /// </summary>
@@ -57,6 +63,9 @@ namespace Scene {
         private void GameStart() {
 
         }
+        #endregion
+
+        #region Block Logic
         /// <summary>
         /// 블록 생성
         /// </summary>
@@ -94,6 +103,30 @@ namespace Scene {
             }
             block.SetColor(color);
         }
+
+        private void ReturnBlock() {
+            blockListInField[0].GetComponent<ObjectPoolItem>().ReturnObject();
+            blockListInField.RemoveAt(0);
+        }
+
+        private void SetBlockPos() {
+            for (int i = 0; i < blockListInField.Count; i++) {
+                Vector3 pos = blockListInField[i].transform.position - blockTarget.transform.position;
+                Vector3 targetPos = blockTarget.transform.position + (pos.normalized * i);
+                blockListInField[i].gameObject.transform.position = targetPos;
+            }
+        }
+        private void BlockMove2Target() {
+            for (int i = 0; i < blockListInField.Count; i++) {
+                Vector3 pos = blockListInField[i].transform.position - blockTarget.transform.position;
+                Vector3 targetPos = blockTarget.transform.position + (pos.normalized * i);
+                var tween = LeanTween.move(blockListInField[i].gameObject, targetPos, 0.1f);
+                tween.setEase(LeanTweenType.easeInQuad);
+               
+            }
+        }
+        #endregion
+        #region Button Logic
         /// <summary>
         /// 왼쪽 버튼 클릭 로직
         /// </summary>
@@ -135,27 +168,6 @@ namespace Scene {
         private void FailButton() {
 
         }
-
-        private void ReturnBlock() {
-            blockListInField[0].GetComponent<ObjectPoolItem>().ReturnObject();
-            blockListInField.RemoveAt(0);
-        }
-
-        private void SetBlockPos() {
-            for (int i = 0; i < blockListInField.Count; i++) {
-                Vector3 pos = blockListInField[i].transform.position - blockTarget.transform.position;
-                Vector3 targetPos = blockTarget.transform.position + (pos.normalized * i);
-                blockListInField[i].gameObject.transform.position = targetPos;
-            }
-        }
-        private void BlockMove2Target() {
-            for (int i = 0; i < blockListInField.Count; i++) {
-                Vector3 pos = blockListInField[i].transform.position - blockTarget.transform.position;
-                Vector3 targetPos = blockTarget.transform.position + (pos.normalized * i);
-                var tween = LeanTween.move(blockListInField[i].gameObject, targetPos, 0.1f);
-                tween.setEase(LeanTweenType.easeInQuad);
-               
-            }
-        }
+        #endregion
     }
 }

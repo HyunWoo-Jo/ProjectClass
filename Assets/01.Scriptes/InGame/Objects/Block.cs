@@ -1,5 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
+///작성일 21.09.26
+///작성자 조현우
 using UnityEngine;
 
 public class Block : MonoBehaviour
