@@ -1,6 +1,7 @@
 ///작성일 21.09.26
 ///최종 수정일 21.10.05
 ///작성자 조현우
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -10,6 +11,7 @@ using UI_Controller;
 namespace Scene {
     public class GameScene : MonoBehaviour {
         #region Property
+
         [HideInInspector]
         public List<Block> blockListInField = new List<Block>();
 
@@ -25,12 +27,15 @@ namespace Scene {
         public List<Color> rightColorList = new List<Color>();
 
         public Monster monster; //2021.10.03 추가
+        public Combo playerCombo = new Combo();
+
+        public Action sucessHandler;
+        public Action failHandler;
         #endregion
 
         #region Unity Method
         private void Awake() {
             Init();
-
         }
 
         private void Start() {
@@ -46,8 +51,11 @@ namespace Scene {
         /// 초기화
         /// </summary>
         private void Init() {
-            buttonController.AddLeftAction(LeftButton);
-            buttonController.AddRightAction(RightButton);
+            buttonController.AddLeftCallback(LeftButton);
+            buttonController.AddRightCallback(RightButton);
+
+            sucessHandler += Succes;
+            failHandler += Fail;
         }
         /// <summary>
         /// 게임 리셋
@@ -55,6 +63,7 @@ namespace Scene {
         private void ResetGame() {
             while (blockListInField.Count != 0) {
                 ReturnBlock();
+                playerCombo.ResetCombo();
             }
         }
         /// <summary>
@@ -64,7 +73,7 @@ namespace Scene {
 
         }
         #endregion
-
+        
         #region Block Logic
         /// <summary>
         /// 블록 생성
@@ -133,9 +142,9 @@ namespace Scene {
         private void LeftButton() {
             if (blockListInField.Count == 0) return;
             if (blockListInField[0].direction.Equals(BlockDirection.LEFT)) {
-                SuccesButton();
+                sucessHandler.Invoke();
             } else {
-                FailButton();
+                failHandler.Invoke();
             }
         }
 
@@ -145,16 +154,19 @@ namespace Scene {
         private void RightButton() {
             if (blockListInField.Count == 0) return;
             if (blockListInField[0].direction.Equals(BlockDirection.RIGHT)) {
-                SuccesButton();
+                sucessHandler.Invoke();
             } else {
-                FailButton();
+                failHandler.Invoke();
             }
         }
         /// <summary>
         /// 같은 색 버튼 클릭 성공
         /// </summary>
-        private void SuccesButton() {
+        private void Succes() {
 
+            playerCombo.AddCombo(1);
+
+            //playerCombo.GetComboDamage(); Player Damage * Combo Damage 배율 / 리턴값 float
             monster.GetDamage(10f); //임시 2021.10.03 추가
 
             ReturnBlock();
@@ -165,8 +177,9 @@ namespace Scene {
         /// <summary>
         /// 같은 색 버튼 클릭 실패
         /// </summary>
-        private void FailButton() {
-
+        private void Fail() {
+            playerCombo.ResetCombo();
+            Player.instance.CurrentHp -= 50.0f; // 임시 테스트용 코드
         }
         #endregion
     }

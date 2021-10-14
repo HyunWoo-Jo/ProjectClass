@@ -1,13 +1,14 @@
 ///작성일 21.10,07
+///수정일 21.10.14
 ///작성자 조현우
 using System;
 
 public class Gold
 {
     private int gold;
-    public Action consumeAction = null;
-    public Action addAction = null;
-    public Action failAction = null;
+    public Action consumeHandler = null;
+    public Action addHandler = null;
+    public Action failHandler = null;
 
     public int GetGold() {
         return gold;
@@ -19,11 +20,11 @@ public class Gold
     /// <returns> true 소모 성공, false 소모 실패 </returns>
     public bool ConsumeGold(int useGold) {
         if(gold < useGold) {
-            if (!(failAction is null)) failAction.Invoke();
+            if (!(failHandler is null)) failHandler.Invoke();
             return false;
         } else {
             gold -= useGold;
-            if (!(consumeAction is null)) consumeAction.Invoke();
+            if (!(consumeHandler is null)) consumeHandler.Invoke();
             return true;
         }
     }
@@ -34,7 +35,7 @@ public class Gold
     /// <param name="addGold">추가 량</param>
     public void AddGold(int addGold) {
         gold += addGold;
-        if (!(addAction is null)) addAction.Invoke();
+        if (!(addHandler is null)) addHandler.Invoke();
     }
 
 }

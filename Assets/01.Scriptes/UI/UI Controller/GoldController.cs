@@ -8,8 +8,8 @@ namespace UI_Controller {
         private void Start() {
             textGold = GetComponent<Text>();
             RenewGold();
-            GameManager.instance.gold.addAction += RenewGold;
-            GameManager.instance.gold.consumeAction += RenewGold;
+            GameManager.instance.gold.addHandler += RenewGold;
+            GameManager.instance.gold.consumeHandler += RenewGold;
         }
 
         private void RenewGold() {

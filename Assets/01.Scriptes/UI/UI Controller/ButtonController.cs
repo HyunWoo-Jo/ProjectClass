@@ -5,27 +5,27 @@ using System;
 
 namespace UI_Controller {
     public class ButtonController : MonoBehaviour {
-        private Action leftHandller;
-        private Action rightHandller;
+        private Action leftHandler;
+        private Action rightHandler;
 
         public void OnLeft() {
-            leftHandller.Invoke();
+            leftHandler.Invoke();
         }
         public void OnRight() {
-            rightHandller.Invoke();
+            rightHandler.Invoke();
         }
 
-        public void AddLeftAction(Action action) {
-            leftHandller += action;
+        public void AddLeftCallback(Action action) {
+            leftHandler += action;
         }
 
-        public void AddRightAction(Action action) {
-            rightHandller += action;
+        public void AddRightCallback(Action action) {
+            rightHandler += action;
         }
 
         public void ResetAction() {
-            leftHandller = null;
-            rightHandller = null;
+            leftHandler = null;
+            rightHandler = null;
         }
     }
 }
