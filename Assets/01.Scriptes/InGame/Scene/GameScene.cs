@@ -23,14 +23,30 @@ namespace Scene {
         [SerializeField]
         private Transform blockTarget;
 
+        [HideInInspector]
+        public bool isPause = false;
+
+        private int maxStage = 5; // 임시
+        private int currentStage = 0; // 임시
+        private float blockDistance = 1.0f;
+
         public List<Color> leftColorList = new List<Color>();
         public List<Color> rightColorList = new List<Color>();
 
         public Monster monster; //2021.10.03 추가
         public Combo playerCombo = new Combo();
 
+        
+
         public Action sucessHandler;
         public Action failHandler;
+
+        #region Controllers;
+        [Header("UI_Controllers")]
+        [SerializeField]
+        private StageController UI_stageController;
+        #endregion
+
         #endregion
 
         #region Unity Method
@@ -43,6 +59,7 @@ namespace Scene {
                 Block block = SpawnBlock();
             }
             SetBlockPos();
+            GameStart();
         }
         #endregion
 
@@ -51,8 +68,11 @@ namespace Scene {
         /// 초기화
         /// </summary>
         private void Init() {
-            buttonController.AddLeftCallback(LeftButton);
-            buttonController.AddRightCallback(RightButton);
+            buttonController.leftButtonHandler += LeftButton;
+            buttonController.rightButtonHandler += RightButton;
+            buttonController.pauseButtonHandler += PauseGame;
+            buttonController.resetartButtonHandler += RestartGame;
+
 
             sucessHandler += Succes;
             failHandler += Fail;
@@ -61,19 +81,36 @@ namespace Scene {
         /// 게임 리셋
         /// </summary>
         private void ResetGame() {
+            TweenManager.Clear();
             while (blockListInField.Count != 0) {
                 ReturnBlock();
                 playerCombo.ResetCombo();
             }
+            GameStart();
         }
         /// <summary>
         /// 게임 시작
         /// </summary>
         private void GameStart() {
+            ShowAndSetStageUI();
+        }
 
+        private void NextStage() {
+            currentStage++;
+            ShowAndSetStageUI();
+        }
+
+        public void PauseGame() {
+            isPause = true;
+            TweenManager.Pause();
+        }
+        
+        public void RestartGame() {
+            isPause = false;
+            TweenManager.Resume();
         }
         #endregion
-        
+
         #region Block Logic
         /// <summary>
         /// 블록 생성
@@ -92,7 +129,7 @@ namespace Scene {
         /// <param name="block"></param>
         private void SetBlock(Block block) {
             int random = UnityEngine.Random.Range(0, 2);
-            if(random == 0) {
+            if (random == 0) {
                 block.direction = BlockDirection.LEFT;
             } else {
                 block.direction = BlockDirection.RIGHT;
@@ -128,18 +165,19 @@ namespace Scene {
         private void BlockMove2Target() {
             for (int i = 0; i < blockListInField.Count; i++) {
                 Vector3 pos = blockListInField[i].transform.position - blockTarget.transform.position;
-                Vector3 targetPos = blockTarget.transform.position + (pos.normalized * i);
-                var tween = LeanTween.move(blockListInField[i].gameObject, targetPos, 0.1f);
+                Vector3 targetPos = blockTarget.transform.position + (pos.normalized * i * blockDistance);
+                var tween = LeanTween.move(blockListInField[i].gameObject, targetPos, 0.1f); 
                 tween.setEase(LeanTweenType.easeInQuad);
-               
             }
         }
+        
         #endregion
         #region Button Logic
         /// <summary>
         /// 왼쪽 버튼 클릭 로직
         /// </summary>
         private void LeftButton() {
+            if (isPause) return;
             if (blockListInField.Count == 0) return;
             if (blockListInField[0].direction.Equals(BlockDirection.LEFT)) {
                 sucessHandler.Invoke();
@@ -152,6 +190,7 @@ namespace Scene {
         /// 오른쪽 버튼 클릭 로직
         /// </summary>
         private void RightButton() {
+            if (isPause) return;
             if (blockListInField.Count == 0) return;
             if (blockListInField[0].direction.Equals(BlockDirection.RIGHT)) {
                 sucessHandler.Invoke();
@@ -181,6 +220,14 @@ namespace Scene {
             playerCombo.ResetCombo();
             Player.instance.CurrentHp -= 50.0f; // 임시 테스트용 코드
         }
+        #endregion
+        #region UI
+
+        private void ShowAndSetStageUI() {
+            UI_stageController.SetStageText(currentStage, maxStage);
+            UI_stageController.FlashText();
+        }
+
         #endregion
     }
 }

@@ -2,30 +2,43 @@
 ///작성자 조현우
 using UnityEngine;
 using System;
-
+using UnityEngine.SceneManagement;
 namespace UI_Controller {
     public class ButtonController : MonoBehaviour {
-        private Action leftHandler;
-        private Action rightHandler;
+        [SerializeField]
+        private PanelController panelController;
+        public Action leftButtonHandler;
+        public Action rightButtonHandler;
+
+        public Action pauseButtonHandler;
+        public Action resetartButtonHandler;
 
         public void OnLeft() {
-            leftHandler.Invoke();
+            leftButtonHandler.Invoke();
         }
         public void OnRight() {
-            rightHandler.Invoke();
+            rightButtonHandler.Invoke();
         }
 
-        public void AddLeftCallback(Action action) {
-            leftHandler += action;
+        public void OnPauseGame() {
+            panelController.FadeIn(panelController.fadePanel,0.3f ,0.7f);
+            panelController.FadeIn(panelController.pausePanel, 0.3f, 1f);
+            pauseButtonHandler.Invoke();
         }
 
-        public void AddRightCallback(Action action) {
-            rightHandler += action;
+        public void OnRestartGame() {
+            resetartButtonHandler.Invoke();
+            panelController.FadeOut(panelController.fadePanel, 0.1f, 0f);
+            panelController.FadeOut(panelController.pausePanel, 0.1f, 0f); 
+        }
+
+        public void OnQuit() {
+            SceneManager.LoadScene("HomeScene");
         }
 
         public void ResetAction() {
-            leftHandler = null;
-            rightHandler = null;
+            leftButtonHandler = null;
+            rightButtonHandler = null;
         }
     }
 }

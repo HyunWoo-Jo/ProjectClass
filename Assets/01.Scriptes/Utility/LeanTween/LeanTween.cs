@@ -1009,7 +1009,6 @@ public class LeanTween : MonoBehaviour {
             global_counter = 0;
         
         tweens[i].setId( (uint)i, global_counter );
-
         return tweens[i];
     }
 

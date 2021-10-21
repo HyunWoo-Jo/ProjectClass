@@ -971,8 +971,7 @@ public class LTDescr
 		}else if( this.useManualTime ){
 			dt = LeanTween.dtManual;
 		}
-
-//		Debug.Log ("tween:" + this+ " dt:"+dt);
+		//Debug.Log ("tween:" + this+ " dt:"+dt);
 		if(this.delay<=0f && directionLocal!=0f){
 			if(trans==null)
 				return true;	
@@ -1005,8 +1004,9 @@ public class LTDescr
 
 				isTweenFinished = this.loopCount == 0 || this.loopType == LeanTweenType.once; // only return true if it is fully complete
 
-				if(isTweenFinished==false && this.onCompleteOnRepeat && this.hasExtraOnCompletes)
-					callOnCompletes(); // this only gets called if onCompleteOnRepeat is set to true, otherwise LeanTween class takes care of calling it
+                if (isTweenFinished == false && this.onCompleteOnRepeat && this.hasExtraOnCompletes) {
+                    callOnCompletes(); // this only gets called if onCompleteOnRepeat is set to true, otherwise LeanTween class takes care of calling it
+                } 
 
 				return isTweenFinished;
 			}
@@ -1018,14 +1018,15 @@ public class LTDescr
 	}
 
 	public void callOnCompletes(){
-		if(this.type==TweenAction.GUI_ROTATE)
+        
+        if (this.type==TweenAction.GUI_ROTATE)
 			this._optional.ltRect.rotateFinished = true;
 
 		if(this.type==TweenAction.DELAYED_SOUND){
 			AudioSource.PlayClipAtPoint((AudioClip)this._optional.onCompleteParam, this.to, this.from.x);
 		}
 		if(this._optional.onComplete!=null){
-			this._optional.onComplete();
+            this._optional.onComplete();
 		}else if(this._optional.onCompleteObject!=null){
 			this._optional.onCompleteObject(this._optional.onCompleteParam);
 		}
@@ -1943,7 +1944,7 @@ public class LTDescr
 	* LeanTween.moveX(gameObject, 5f, 2.0f ).setOnComplete( tweenFinished );
 	*/
 	public LTDescr setOnComplete( Action onComplete ){
-		this._optional.onComplete = onComplete;
+		this._optional.onComplete += onComplete;
 		this.hasExtraOnCompletes = true;
 		return this;
 	}
