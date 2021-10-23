@@ -12,6 +12,11 @@ namespace UI_Controller {
             GameManager.instance.gold.consumeHandler += RenewGold;
         }
 
+        private void OnDestroy() {
+            GameManager.instance.gold.addHandler -= RenewGold;
+            GameManager.instance.gold.consumeHandler -= RenewGold;
+        }
+
         private void RenewGold() {
             textGold.text = GameManager.instance.gold.GetGold().ToString();
         }
