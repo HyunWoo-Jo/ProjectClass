@@ -6,7 +6,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
-namespace UI_Controller {
+namespace GameUI.Controller {
     public class DungeonsController : MonoBehaviour {
         [SerializeField]
         private GameObject buttonParent;

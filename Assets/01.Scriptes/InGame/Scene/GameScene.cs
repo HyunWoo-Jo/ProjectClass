@@ -7,10 +7,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using DesignStruct;
 using Spawner;
-using UI_Controller;
+using GameUI.Controller;
+using GameUi;
 namespace Scene {
     public class GameScene : MonoBehaviour {
         #region Property
+
+        public Canvas mainCavas;
 
         [HideInInspector]
         public List<Block> blockListInField = new List<Block>();
@@ -29,8 +32,10 @@ namespace Scene {
         private int maxStage = 5; // 임시
         private int currentStage = 0; // 임시
         private float blockDistance = 1.0f;
-
+        private int blockDirectionCount = 2; // 2 = LEFT, RIGHT / 3 = ... + Center
+        
         public List<Color> leftColorList = new List<Color>();
+        public List<Color> centerColorList = new List<Color>();
         public List<Color> rightColorList = new List<Color>();
 
         public Monster monster; //2021.10.03 추가
@@ -60,9 +65,35 @@ namespace Scene {
             }
             SetBlockPos();
             GameStart();
+            StartCoroutine(TestAddButton());
         }
         #endregion
 
+        private IEnumerator TestAddButton() {
+            yield return new WaitForSeconds(3f);
+            AddButtonCeneter();
+            yield return new WaitForSeconds(10);
+            DeleteButtonCenter();
+        }
+
+        private void AddButtonCeneter() {
+            blockDirectionCount = 3;
+            Popup<SpeechPopup>.InstancePopup(mainCavas.gameObject).AutoKill(3f).SetText("버튼 증가");
+            buttonController.AddCenterButton();
+        }
+
+        private void DeleteButtonCenter() {
+            blockDirectionCount = 2;
+            for(int i = blockListInField.Count - 1; i >= 0; i--) {
+                Block block = blockListInField[i];
+                if(block.direction.Equals(BlockDirection.Center)) {
+                    ReturnBlock(i);
+                    SpawnBlock();
+                }
+            }
+            BlockMove2Target();
+            buttonController.DeleteCenterButton();
+        }
         #region GameLogic
         /// <summary>
         /// 초기화
@@ -70,8 +101,11 @@ namespace Scene {
         private void Init() {
             buttonController.leftButtonHandler += LeftButton;
             buttonController.rightButtonHandler += RightButton;
+            buttonController.centerButtonHandler += CenterButton;
+            
             buttonController.pauseButtonHandler += PauseGame;
             buttonController.resetartButtonHandler += RestartGame;
+            
 
 
             sucessHandler += Succes;
@@ -83,7 +117,7 @@ namespace Scene {
         private void ResetGame() {
             TweenManager.Clear();
             while (blockListInField.Count != 0) {
-                ReturnBlock();
+                ReturnBlock(0);
                 playerCombo.ResetCombo();
             }
             GameStart();
@@ -128,11 +162,13 @@ namespace Scene {
         /// </summary>
         /// <param name="block"></param>
         private void SetBlock(Block block) {
-            int random = UnityEngine.Random.Range(0, 2);
+            int random = UnityEngine.Random.Range(0, blockDirectionCount);
             if (random == 0) {
                 block.direction = BlockDirection.LEFT;
-            } else {
+            } else if(random == 1) {
                 block.direction = BlockDirection.RIGHT;
+            } else {
+                block.direction = BlockDirection.Center;
             }
             SetBlockColor(block);
         }
@@ -141,18 +177,24 @@ namespace Scene {
         /// </summary>
         /// <param name="block"></param>
         private void SetBlockColor(Block block) {
-            Color color;
-            if (block.direction.Equals(BlockDirection.LEFT)) {
-                color = leftColorList[UnityEngine.Random.Range(0, leftColorList.Count)];
-            } else {
-                color = rightColorList[UnityEngine.Random.Range(0, rightColorList.Count)];
+            Color color = Color.black;
+            switch(block.direction) {
+                case BlockDirection.LEFT:
+                    color = leftColorList[UnityEngine.Random.Range(0, leftColorList.Count)];
+                    break;
+                case BlockDirection.Center:
+                    color = centerColorList[UnityEngine.Random.Range(0, centerColorList.Count)];
+                    break;
+                case BlockDirection.RIGHT:
+                    color = rightColorList[UnityEngine.Random.Range(0, rightColorList.Count)];
+                    break;
             }
             block.SetColor(color);
         }
 
-        private void ReturnBlock() {
-            blockListInField[0].GetComponent<ObjectPoolItem>().ReturnObject();
-            blockListInField.RemoveAt(0);
+        private void ReturnBlock(int index) {
+            blockListInField[index].GetComponent<ObjectPoolItem>().ReturnObject();
+            blockListInField.RemoveAt(index);
         }
 
         private void SetBlockPos() {
@@ -198,6 +240,16 @@ namespace Scene {
                 failHandler.Invoke();
             }
         }
+
+        private void CenterButton() {
+            if(isPause) return;
+            if(blockListInField.Count == 0) return;
+            if(blockListInField[0].direction.Equals(BlockDirection.Center)) {
+                sucessHandler.Invoke();
+            } else {
+                failHandler.Invoke();
+            }
+        }
         /// <summary>
         /// 같은 색 버튼 클릭 성공
         /// </summary>
@@ -208,7 +260,7 @@ namespace Scene {
             //playerCombo.GetComboDamage(); Player Damage * Combo Damage 배율 / 리턴값 float
             monster.GetDamage(10f); //임시 2021.10.03 추가
 
-            ReturnBlock();
+            ReturnBlock(0);
             SpawnBlock();
             BlockMove2Target();
         }

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
-namespace UI_Controller {
+namespace GameUI.Controller {
     public class ReinforcementController : MonoBehaviour {
         [SerializeField]
         private Reinforcement reinforcement;

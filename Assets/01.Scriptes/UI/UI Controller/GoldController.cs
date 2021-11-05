@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-namespace UI_Controller {
+namespace GameUI.Controller {
     public class GoldController : MonoBehaviour {
         private Text textGold;
         private void Start() {

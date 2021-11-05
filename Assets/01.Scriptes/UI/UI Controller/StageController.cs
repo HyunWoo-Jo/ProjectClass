@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace UI_Controller {
+namespace GameUI.Controller {
     public class StageController : MonoBehaviour {
         [SerializeField]
         private Text stageText;

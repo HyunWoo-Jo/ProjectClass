@@ -4,7 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace UI_Controller {
+namespace GameUI.Controller {
     public class HomeController : MonoBehaviour {
         [SerializeField]
         private GameObject dungeonsPanel;
