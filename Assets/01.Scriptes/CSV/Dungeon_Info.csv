@@ -1,0 +1,27 @@
+Dungeon,Stage,Monster,Attack,Defend,HP,Attack Speed,Defend Break
+1,1,Undead,100,10,1000,5,10
+1,2,Undead,100,10,1000,5,10
+1,2,Undead,100,10,1000,5,10
+1,3,Minotauros,200,20,2000,5,10
+2,1,Minotauros,200,20,2000,5,10
+2,2,Undead,100,10,1000,3,10
+2,2,Minotauros,200,20,2000,5,10
+2,2,Undead,100,10,1000,3,10
+2,3,Minotauros,200,20,2000,4,10
+2,3,Minotauros,200,20,2000,6,10
+2,3,Minotauros,200,20,2000,4,10
+3,1,Undead,150,15,1500,3,20
+3,1,Undead,150,15,1500,3,20
+3,1,Undead,150,15,1500,3,20
+3,2,Minotauros,250,30,3500,4,30
+3,2,Minotauros,250,30,3500,4,30
+3,2,Minotauros,250,30,3500,4,30
+3,3,Behemoth,1000,50,10000,3,50
+4,1,Undead,200,20,2000,5,20
+4,1,Undead,200,20,2000,5,20
+4,1,Undead,200,20,2000,5,20
+4,2,Minotauros,250,30,3500,4,30
+4,2,Minotauros,250,30,3500,4,30
+4,2,Minotauros,250,30,3500,4,30
+4,3,Behemoth,1000,50,10000,3,50
+4,4,Fallen King,2000,100,50000,5,50
