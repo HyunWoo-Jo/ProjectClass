@@ -2,32 +2,51 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using Scene;
 
 public class Monster : MonoBehaviour
-{    
-    public Image hpBar;        
-    float maxHp;
-    float hp;
-
+{   
+    //HP
+    public Image hpBar;    
+    
+    //Timer
     public Image timerBar;
     public Text timerText;
-    float maxTimer;
-    float timer;
+
+    //Btn
+    public Button btn;
+    private GameScene scene;
+
+    struct monStatus
+    {
+        public float maxHp;
+        public float hp;
+        public float amor;
+        public float atkSpeed;
+        public float atkTimer;
+        public float amorbreak;
+    }
+    monStatus status;
+
     
     // Start is called before the first frame update
     void Start()
     {
-        SetReady(100f, 5f); //임시 
+        scene = GameObject.Find("GameScene").GetComponent<GameScene>();
+        btn.onClick.AddListener(() => scene.SetCurMonster(this));
+        scene.SetCurMonster(this);
+
+        SetReady(100f, 5f, 5f, 1f, transform); //임시 
     }
 
     // Update is called once per frame
     void Update()
     {
-        timer -= Time.deltaTime;
-        if(timer <= float.Epsilon)
+        status.atkTimer -= Time.deltaTime;
+        if(status.atkTimer <= float.Epsilon)
         {
-            Attack();           
-            timer = maxTimer;
+            Attack();
+            status.atkTimer = status.atkSpeed;
         }
 
         ChangeTimerUI();
@@ -38,27 +57,31 @@ public class Monster : MonoBehaviour
         //Player Damaged
     }    
 
-    public void SetReady(float maxHp, float maxTimer)
+    public void SetReady(float maxHp, float amor, float atkSpeed, float amorbreak, Transform pos)
     {
-        this.maxHp = maxHp;
-        hp = maxHp;
+        status.maxHp = maxHp;
+        status.hp = maxHp;
+        status.amor = amor;
+        status.atkSpeed = atkSpeed;
+        status.atkTimer = atkSpeed;
+        status.amorbreak = amorbreak;
 
-        this.maxTimer = maxTimer;
-        timer = maxTimer;
-
-        hpBar.fillAmount = 1f;
-        timerBar.fillAmount = 1f;
-
-        int num = (int)maxTimer + 1;
-        timerText.text = num.ToString();
+        transform.position = pos.position;
+        
+        ChangeHpBar();
+        ChangeTimerUI();
     }
 
     public void GetDamage(float atk)
     {
-        hp -= atk;
-        if(hp <= float.Epsilon)
+        float curDamage = atk;
+        curDamage -= status.amor;
+
+        status.hp -= curDamage;
+        if(status.hp <= float.Epsilon)
         {//임시 복구
-            hp = maxHp;
+            status.hp = status.maxHp;
+            //scene.SetCurMonster(null);
         }
 
         ChangeHpBar();
@@ -66,16 +89,17 @@ public class Monster : MonoBehaviour
 
     private void ChangeHpBar()
     {
-        float percent = hp / maxHp;
+        float percent = status.hp / status.maxHp;
         hpBar.fillAmount = percent;
     }
 
     private void ChangeTimerUI()
     {
-        int num = (int)timer + 1;
+        int num = (int)status.atkTimer + 1;
         timerText.text = num.ToString();
 
-        float percent = timer / maxTimer;
+        float percent = status.atkTimer / status.atkSpeed;
         timerBar.fillAmount = percent;
     }
+    
 }

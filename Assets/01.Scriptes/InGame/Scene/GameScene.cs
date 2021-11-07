@@ -38,7 +38,7 @@ namespace Scene {
         public List<Color> centerColorList = new List<Color>();
         public List<Color> rightColorList = new List<Color>();
 
-        public Monster monster; //2021.10.03 추가
+        private Monster monster = null; //2021.11.07 변경
         public Combo playerCombo = new Combo();
 
         
@@ -254,15 +254,23 @@ namespace Scene {
         /// 같은 색 버튼 클릭 성공
         /// </summary>
         private void Succes() {
-
+            
             playerCombo.AddCombo(1);
 
             //playerCombo.GetComboDamage(); Player Damage * Combo Damage 배율 / 리턴값 float
-            monster.GetDamage(10f); //임시 2021.10.03 추가
+            if (monster != null)//2021.11.07 
+            {
+                monster.GetDamage(10f); 
+            }            
 
             ReturnBlock(0);
             SpawnBlock();
             BlockMove2Target();
+        }
+
+        public void SetCurMonster(Monster curMon)
+        {
+            monster = curMon;
         }
 
         /// <summary>
