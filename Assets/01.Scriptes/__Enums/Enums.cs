@@ -11,3 +11,16 @@ public enum Stats {
     STAGE_RECOVERY_HP,
     ABSORPTION_HP,
 }
+
+public enum MonsterInfo
+{
+    Monster,
+    Attack,
+    Defend,
+    HP,
+    AttackSpeed,
+    DefendBreak,
+    Dark,
+    ButtonPlus,
+    DoubleAttack
+}

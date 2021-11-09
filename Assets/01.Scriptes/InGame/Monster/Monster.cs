@@ -6,16 +6,15 @@ using Scene;
 
 public class Monster : MonoBehaviour
 {   
-    //HP
     public Image hpBar;    
-    
-    //Timer
+
     public Image timerBar;
     public Text timerText;
 
-    //Btn
-    public Button btn;
+    public Button imgBtn;
     private GameScene scene;
+
+    private Image monSprite;
 
     struct monStatus
     {
@@ -29,14 +28,15 @@ public class Monster : MonoBehaviour
     monStatus status;
 
     
-    // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         scene = GameObject.Find("GameScene").GetComponent<GameScene>();
-        btn.onClick.AddListener(() => scene.SetCurMonster(this));
+        imgBtn.onClick.AddListener(() => scene.SetCurMonster(this));
         scene.SetCurMonster(this);
 
-        SetReady(100f, 5f, 5f, 1f, transform); //임시 
+        monSprite = imgBtn.gameObject.GetComponent<Image>();        
+
+        SetReady(100f, 5f, 5f, 1f); //임시 
     }
 
     // Update is called once per frame
@@ -49,7 +49,7 @@ public class Monster : MonoBehaviour
             status.atkTimer = status.atkSpeed;
         }
 
-        ChangeTimerUI();
+        ChangeTimerUI();                
     }
 
     private void Attack()
@@ -57,7 +57,7 @@ public class Monster : MonoBehaviour
         //Player Damaged
     }    
 
-    public void SetReady(float maxHp, float amor, float atkSpeed, float amorbreak, Transform pos)
+    public void SetReady(float maxHp, float amor, float atkSpeed, float amorbreak, Sprite sprite)
     {
         status.maxHp = maxHp;
         status.hp = maxHp;
@@ -65,9 +65,21 @@ public class Monster : MonoBehaviour
         status.atkSpeed = atkSpeed;
         status.atkTimer = atkSpeed;
         status.amorbreak = amorbreak;
+        monSprite.sprite = sprite;
 
-        transform.position = pos.position;
-        
+        ChangeHpBar();
+        ChangeTimerUI();
+    }
+
+    public void SetReady(float maxHp, float amor, float atkSpeed, float amorbreak)
+    {//임시 함수
+        status.maxHp = maxHp;
+        status.hp = maxHp;
+        status.amor = amor;
+        status.atkSpeed = atkSpeed;
+        status.atkTimer = atkSpeed;
+        status.amorbreak = amorbreak;
+
         ChangeHpBar();
         ChangeTimerUI();
     }
