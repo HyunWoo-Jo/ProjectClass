@@ -31,8 +31,7 @@ public class CsvReader : Singleton<CsvReader>
             string key = strs[0] + "-" + strs[1];
             if (dic_monsterInfo.ContainsKey(key) == false)
                 dic_monsterInfo.Add(key, new List<Dictionary<MonsterInfo, string>>());
-
-                                    
+                                                
             Dictionary<MonsterInfo, string> curMon = new Dictionary<MonsterInfo, string>();
             curMon.Add(MonsterInfo.Monster, strs[2]);
             curMon.Add(MonsterInfo.Attack, strs[3]);

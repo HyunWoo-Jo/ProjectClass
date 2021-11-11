@@ -10,34 +10,26 @@ public class Monster : MonoBehaviour
 
     public Image timerBar;
     public Text timerText;
+     
+    public Image monSprite;
 
-    public Button imgBtn;
-    private GameScene scene;
-
-    private Image monSprite;
 
     struct monStatus
     {
+        public float atk;
         public float maxHp;
         public float hp;
-        public float amor;
+        public float defend;
+        public float defendbreak;
         public float atkSpeed;
         public float atkTimer;
-        public float amorbreak;
+
+        public bool dark;
+        public bool btnPlus;
+        public bool doubleAtk;
     }
     monStatus status;
 
-    
-    void Awake()
-    {
-        scene = GameObject.Find("GameScene").GetComponent<GameScene>();
-        imgBtn.onClick.AddListener(() => scene.SetCurMonster(this));
-        scene.SetCurMonster(this);
-
-        monSprite = imgBtn.gameObject.GetComponent<Image>();        
-
-        SetReady(100f, 5f, 5f, 1f); //임시 
-    }
 
     // Update is called once per frame
     void Update()
@@ -55,53 +47,46 @@ public class Monster : MonoBehaviour
     private void Attack()
     {
         //Player Damaged
+        //monManager.Attack()
     }    
 
-    public void SetReady(float maxHp, float amor, float atkSpeed, float amorbreak, Sprite sprite)
+    public void SetReady(Dictionary<MonsterInfo, string> info, Sprite sprite)
     {
-        status.maxHp = maxHp;
-        status.hp = maxHp;
-        status.amor = amor;
-        status.atkSpeed = atkSpeed;
-        status.atkTimer = atkSpeed;
-        status.amorbreak = amorbreak;
+        status.atk = float.Parse(info[MonsterInfo.Attack]);
+        status.maxHp = float.Parse(info[MonsterInfo.HP]);
+        status.hp = status.maxHp;
+        status.defend = float.Parse(info[MonsterInfo.Defend]);
+        status.atkSpeed = float.Parse(info[MonsterInfo.AttackSpeed]);
+        status.atkTimer = status.atkSpeed;
+        status.defendbreak = float.Parse(info[MonsterInfo.DefendBreak]);
         monSprite.sprite = sprite;
 
-        ChangeHpBar();
-        ChangeTimerUI();
-    }
-
-    public void SetReady(float maxHp, float amor, float atkSpeed, float amorbreak)
-    {//임시 함수
-        status.maxHp = maxHp;
-        status.hp = maxHp;
-        status.amor = amor;
-        status.atkSpeed = atkSpeed;
-        status.atkTimer = atkSpeed;
-        status.amorbreak = amorbreak;
+        status.dark = (info[MonsterInfo.Dark] == "TRUE") ? true : false;
+        status.btnPlus = (info[MonsterInfo.ButtonPlus] == "TRUE") ? true : false;
+        status.doubleAtk = (info[MonsterInfo.DoubleAttack] == "TRUE") ? true : false;
 
         ChangeHpBar();
         ChangeTimerUI();
     }
 
-    public void GetDamage(float atk)
+    public bool GetDamage(float atk)
     {
         float curDamage = atk;
-        curDamage -= status.amor;
+        curDamage -= status.defend;
 
         status.hp -= curDamage;
-        if(status.hp <= float.Epsilon)
-        {//임시 복구
-            status.hp = status.maxHp;
-            //scene.SetCurMonster(null);
-        }
-
         ChangeHpBar();
+        if (status.hp <= float.Epsilon)
+            return false;
+        else
+            return true;        
     }
 
     private void ChangeHpBar()
     {
-        float percent = status.hp / status.maxHp;
+        float curHp = status.hp;
+        if (curHp < 0) curHp = 0f;
+        float percent = curHp / status.maxHp;
         hpBar.fillAmount = percent;
     }
 
