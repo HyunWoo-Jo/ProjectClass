@@ -266,6 +266,8 @@ namespace Scene {
             ReturnBlock(0);
             SpawnBlock();
             BlockMove2Target();
+
+            SoundManager.instance.PlayEFF("BlockButton");
         }
 
         public void SetCurMonster(Monster curMon)
@@ -279,6 +281,7 @@ namespace Scene {
         private void Fail() {
             playerCombo.ResetCombo();
             Player.instance.CurrentHp -= 50.0f; // 임시 테스트용 코드
+            SoundManager.instance.PlayEFF("Hit_Player");
         }
         #endregion
         #region UI

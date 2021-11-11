@@ -41,15 +41,12 @@ namespace GameUI.Controller {
             if(currentComboMangnification != magnification) {
                 currentComboMangnification = magnification;
                 SetFont(magnification);
-                Debug.Log("Change");
             }
             comboCountText.text = string.Format("{0} \n {1}", gameScene.playerCombo.GetCombo().ToString(), comboStr);
         }
 
         private void SetFont(float magnification) {
             int index = (int)(magnification * 10) - 10;
-            Debug.Log(comboFontSizeList[index]);
-            Debug.Log(comboFontColorList[index]);
             comboCountText.fontSize = comboFontSizeList[index];
             comboOutline.effectColor = comboFontColorList[index];
         }

@@ -37,6 +37,7 @@ namespace GameUI.Controller {
         private void SuccessReinfoce(ReinforceSlot slot) {
             reinforcement.level[slot.stat]++;
             reinforcement.SetReinfoce();
+            SoundManager.Play_EFF("Reinforce");
             SetText(slot);
         }
         private void FailReinfoce() {

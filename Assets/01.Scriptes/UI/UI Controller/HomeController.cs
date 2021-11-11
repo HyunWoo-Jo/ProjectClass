@@ -19,11 +19,18 @@ namespace GameUI.Controller {
         }
 
         public void OnOpenDungeon() {
+            if(!dungeonsPanel.activeSelf) {
+                SoundManager.Play_EFF("Button");
+            }
             OffAllPanel();
             dungeonsPanel.SetActive(true);
+            
         }
         public void OnOpenReinforce() {
-            OffAllPanel();
+            if(!reinforcementsPanel.activeSelf) {
+                SoundManager.Play_EFF("Button");
+            }
+            OffAllPanel();      
             reinforcementsPanel.SetActive(true);
         }
 

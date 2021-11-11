@@ -16,7 +16,7 @@ namespace GameUI.Controller {
         [SerializeField]
         private Text doungeonNameContext;
 
-        private void Awake() {
+        protected void Awake() {
             Button[] buttons = buttonParent.GetComponentsInChildren<Button>();
             foreach (var button in buttons) {
                 dungeonList.Add(button);
@@ -28,6 +28,7 @@ namespace GameUI.Controller {
         public void OpenEnterPanel() {
             //텍스트 내용 변경
             dungeonEnterPanel.SetActive(true);
+            SoundManager.Play_EFF("Button");
         }
 
         public void OnEnter() {
@@ -36,6 +37,7 @@ namespace GameUI.Controller {
 
         public void OnBack() {
             dungeonEnterPanel.SetActive(false);
+            SoundManager.Play_EFF("Button");
         }
     }
 }

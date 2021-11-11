@@ -77,12 +77,14 @@ namespace GameUI.Controller {
         }
 
         public void OnPauseGame() {
+            SoundManager.Play_EFF("Button");
             panelController.FadeIn(panelController.fadePanel,0.3f ,0.7f);
             panelController.FadeIn(panelController.pausePanel, 0.3f, 1f);
             pauseButtonHandler.Invoke();
         }
 
         public void OnRestartGame() {
+            SoundManager.Play_EFF("Button");
             resetartButtonHandler.Invoke();
             panelController.FadeOut(panelController.fadePanel, 0.1f, 0f);
             panelController.FadeOut(panelController.pausePanel, 0.1f, 0f);
