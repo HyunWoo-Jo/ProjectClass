@@ -20,6 +20,7 @@ public enum MonsterInfo
     HP,
     AttackSpeed,
     DefendBreak,
+
     Dark,
     ButtonPlus,
     DoubleAttack

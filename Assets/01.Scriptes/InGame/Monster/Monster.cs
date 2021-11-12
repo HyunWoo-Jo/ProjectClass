@@ -13,6 +13,7 @@ public class Monster : MonoBehaviour
      
     public Image monSprite;
 
+    public MonsterManager manager;
 
     struct monStatus
     {
@@ -30,13 +31,15 @@ public class Monster : MonoBehaviour
     }
     monStatus status;
 
+    private int skChecker = 0;
+
 
     // Update is called once per frame
     void Update()
     {
         status.atkTimer -= Time.deltaTime;
         if(status.atkTimer <= float.Epsilon)
-        {
+        {            
             Attack();
             status.atkTimer = status.atkSpeed;
         }
@@ -46,8 +49,22 @@ public class Monster : MonoBehaviour
 
     private void Attack()
     {
-        //Player Damaged
-        //monManager.Attack()
+        manager.AttakToPlayer(status.atk, status.defendbreak);
+
+        skChecker++;
+        if (skChecker == 2)
+        {
+            if (status.doubleAtk) manager.AttakToPlayer(status.atk, status.defendbreak);
+        }
+        else if (skChecker == 3)
+        {
+            if (status.dark) manager.RequestSk(MonsterInfo.Dark);
+            if (status.btnPlus) manager.RequestSk(MonsterInfo.ButtonPlus);
+        }
+        else if (skChecker == 4)
+        {
+            skChecker = 0;
+        }
     }    
 
     public void SetReady(Dictionary<MonsterInfo, string> info, Sprite sprite)
@@ -65,14 +82,17 @@ public class Monster : MonoBehaviour
         status.btnPlus = (info[MonsterInfo.ButtonPlus] == "TRUE") ? true : false;
         status.doubleAtk = (info[MonsterInfo.DoubleAttack] == "TRUE") ? true : false;
 
+        skChecker = 0;
+
         ChangeHpBar();
         ChangeTimerUI();
     }
 
-    public bool GetDamage(float atk)
+    public bool GetDamage(float atk, float combo = 1f)
     {
-        float curDamage = atk;
+        float curDamage = atk * combo;
         curDamage -= status.defend;
+        if (curDamage <= 0) curDamage = 1f;
 
         status.hp -= curDamage;
         ChangeHpBar();

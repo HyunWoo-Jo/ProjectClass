@@ -4,7 +4,8 @@ using UnityEngine;
 using Scene;
 
 public class MonsterManager : MonoBehaviour
-{    
+{
+    public MonsterSk skManager;
 
     [System.Serializable]
     public struct MonSpot
@@ -23,6 +24,8 @@ public class MonsterManager : MonoBehaviour
     public List<MonSprite> monSprite;
 
     public GameScene scene;
+    public GameUI.Controller.PlayerController pCont;
+
 
     private string dungeonNum;
     private int stage = 1;
@@ -34,7 +37,7 @@ public class MonsterManager : MonoBehaviour
     
     private void Start()
     {        
-        StartDungeon(4);
+        StartDungeon(4); //임시, 추후 씬로드시 불려야함
     }
 
     public void StartDungeon(int dungeonNum)
@@ -50,11 +53,6 @@ public class MonsterManager : MonoBehaviour
     private void SetupStageMonsters()
     {
         Dictionary<string, List<Dictionary<MonsterInfo, string>>> dic = CsvReader.instance.dic_monsterInfo;
-
-        //for (int i = 0; i < monsterSpot.Count; i++)
-        //    for (int j = 0; i < monsterSpot[i].spot.Count; j++)
-        //        monsterSpot[i].spot[j].gameObject.SetActive(false);
-
         int spotIndex = dic[stageInfoKey].Count - 1;
         
         for (int i = 0; i < monsterSpot[spotIndex].spot.Count; i++)
@@ -76,7 +74,7 @@ public class MonsterManager : MonoBehaviour
         }
     }
 
-    public void GetDamage(float atk)
+    public void GetDamage(float atk, float combo = 1f)
     {
         if (curMonList.Count == 0) return;
 
@@ -95,11 +93,23 @@ public class MonsterManager : MonoBehaviour
                 }
                 else
                 {
-                    //GameEnd 알림
+                    //GameEnd, dungeon clear 알림 필요
                 }
             }
         }
     }
 
+    public void AttakToPlayer(float atk, float defendBreak)
+    {
+        pCont.DamageByMonster(atk, defendBreak);
+    }
+
+    public void RequestSk(MonsterInfo info)
+    {
+        if (info == MonsterInfo.ButtonPlus)
+            scene.StartCoroutine(scene.TestAddButton());
+        else
+            skManager.PlaySkill(info);
+    }
 
 }

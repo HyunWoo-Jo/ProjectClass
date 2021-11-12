@@ -65,11 +65,12 @@ namespace Scene {
             }
             SetBlockPos();
             GameStart();
-            StartCoroutine(TestAddButton());
+            //StartCoroutine(TestAddButton());
         }
         #endregion
 
-        private IEnumerator TestAddButton() {
+        public IEnumerator TestAddButton() {
+            //MonsterManager에서 이용중입니다.
             yield return new WaitForSeconds(3f);
             AddButtonCeneter();
             yield return new WaitForSeconds(10);
@@ -258,8 +259,7 @@ namespace Scene {
             playerCombo.AddCombo(1);
 
             //playerCombo.GetComboDamage(); Player Damage * Combo Damage 배율 / 리턴값 float
-
-            if(monManager != null) monManager.GetDamage(500f); 
+            if(monManager != null) monManager.GetDamage(playerCombo.GetComboDamage()); 
 
             ReturnBlock(0);
             SpawnBlock();

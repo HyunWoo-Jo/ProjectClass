@@ -58,5 +58,25 @@ namespace GameUI.Controller {
             float percent = Player.instance.CurrentHp / Player.instance.MaxHp;
             hp.fillAmount = percent;
         }
+
+        public void DamageByMonster(float atk, float defendBreak)
+        {
+            //2021.11.12 작성, MonsterManager에서 사용중
+            //확인 후 자유롭게 변경하셔도 됩니다.
+            float ratio = 0.5f;
+            float armour = Player.instance.Armour;
+            if (armour < defendBreak)
+            {
+                float percent = (armour / defendBreak) * 100f;
+                if (percent < 70) ratio = 0.6f;
+                if (percent < 60) ratio = 0.7f;
+                if (percent < 50) ratio = 0.8f;
+                if (percent < 40) ratio = 0.9f;
+                if (percent < 20) ratio = 1f;
+            }
+            int curDamage = (int)(atk * ratio);
+            Player.instance.CurrentHp -= curDamage;
+            ChangeHpBar();
+        }
     }
 }
