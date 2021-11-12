@@ -249,7 +249,7 @@ MonoBehaviour:
   hpBar: {fileID: 7150269057936665626}
   timerBar: {fileID: 7150269059731870350}
   timerText: {fileID: 7150269058696312704}
-  btn: {fileID: 1550253782643694021}
+  imgBtn: {fileID: 1550253782643694021}
 --- !u!1 &7150269058696312718
 GameObject:
   m_ObjectHideFlags: 0
@@ -517,7 +517,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 90, y: 90}
+  m_SizeDelta: {x: 80, y: 80}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &7150269059731870337
 CanvasRenderer:
