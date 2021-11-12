@@ -10,41 +10,36 @@ public class Monster : MonoBehaviour
 
     public Image timerBar;
     public Text timerText;
+     
+    public Image monSprite;
 
-    public Button imgBtn;
-    private GameScene scene;
-
-    private Image monSprite;
+    public MonsterManager manager;
 
     struct monStatus
     {
+        public float atk;
         public float maxHp;
         public float hp;
-        public float amor;
+        public float defend;
+        public float defendbreak;
         public float atkSpeed;
         public float atkTimer;
-        public float amorbreak;
+
+        public bool dark;
+        public bool btnPlus;
+        public bool doubleAtk;
     }
     monStatus status;
 
-    
-    void Awake()
-    {
-        scene = GameObject.Find("GameScene").GetComponent<GameScene>();
-        imgBtn.onClick.AddListener(() => scene.SetCurMonster(this));
-        scene.SetCurMonster(this);
+    private int skChecker = 0;
 
-        monSprite = imgBtn.gameObject.GetComponent<Image>();        
-
-        SetReady(100f, 5f, 5f, 1f); //임시 
-    }
 
     // Update is called once per frame
     void Update()
     {
         status.atkTimer -= Time.deltaTime;
         if(status.atkTimer <= float.Epsilon)
-        {
+        {            
             Attack();
             status.atkTimer = status.atkSpeed;
         }
@@ -54,54 +49,64 @@ public class Monster : MonoBehaviour
 
     private void Attack()
     {
-        //Player Damaged
+        manager.AttakToPlayer(status.atk, status.defendbreak);
+
+        skChecker++;
+        if (skChecker == 2)
+        {
+            if (status.doubleAtk) manager.AttakToPlayer(status.atk, status.defendbreak);
+        }
+        else if (skChecker == 3)
+        {
+            if (status.dark) manager.RequestSk(MonsterInfo.Dark);
+            if (status.btnPlus) manager.RequestSk(MonsterInfo.ButtonPlus);
+        }
+        else if (skChecker == 4)
+        {
+            skChecker = 0;
+        }
     }    
 
-    public void SetReady(float maxHp, float amor, float atkSpeed, float amorbreak, Sprite sprite)
+    public void SetReady(Dictionary<MonsterInfo, string> info, Sprite sprite)
     {
-        status.maxHp = maxHp;
-        status.hp = maxHp;
-        status.amor = amor;
-        status.atkSpeed = atkSpeed;
-        status.atkTimer = atkSpeed;
-        status.amorbreak = amorbreak;
+        status.atk = float.Parse(info[MonsterInfo.Attack]);
+        status.maxHp = float.Parse(info[MonsterInfo.HP]);
+        status.hp = status.maxHp;
+        status.defend = float.Parse(info[MonsterInfo.Defend]);
+        status.atkSpeed = float.Parse(info[MonsterInfo.AttackSpeed]);
+        status.atkTimer = status.atkSpeed;
+        status.defendbreak = float.Parse(info[MonsterInfo.DefendBreak]);
         monSprite.sprite = sprite;
 
-        ChangeHpBar();
-        ChangeTimerUI();
-    }
+        status.dark = (info[MonsterInfo.Dark] == "TRUE") ? true : false;
+        status.btnPlus = (info[MonsterInfo.ButtonPlus] == "TRUE") ? true : false;
+        status.doubleAtk = (info[MonsterInfo.DoubleAttack] == "TRUE") ? true : false;
 
-    public void SetReady(float maxHp, float amor, float atkSpeed, float amorbreak)
-    {//임시 함수
-        status.maxHp = maxHp;
-        status.hp = maxHp;
-        status.amor = amor;
-        status.atkSpeed = atkSpeed;
-        status.atkTimer = atkSpeed;
-        status.amorbreak = amorbreak;
+        skChecker = 0;
 
         ChangeHpBar();
         ChangeTimerUI();
     }
 
-    public void GetDamage(float atk)
+    public bool GetDamage(float atk, float combo = 1f)
     {
-        float curDamage = atk;
-        curDamage -= status.amor;
+        float curDamage = atk * combo;
+        curDamage -= status.defend;
+        if (curDamage <= 0) curDamage = 1f;
 
         status.hp -= curDamage;
-        if(status.hp <= float.Epsilon)
-        {//임시 복구
-            status.hp = status.maxHp;
-            //scene.SetCurMonster(null);
-        }
-
         ChangeHpBar();
+        if (status.hp <= float.Epsilon)
+            return false;
+        else
+            return true;        
     }
 
     private void ChangeHpBar()
     {
-        float percent = status.hp / status.maxHp;
+        float curHp = status.hp;
+        if (curHp < 0) curHp = 0f;
+        float percent = curHp / status.maxHp;
         hpBar.fillAmount = percent;
     }
 
