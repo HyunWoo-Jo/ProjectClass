@@ -1,5 +1,4 @@
 ///작성일 21.09.26
-///최종 수정일 21.10.05
 ///작성자 조현우
 using System;
 using System.Collections;
@@ -9,11 +8,15 @@ using DesignStruct;
 using Spawner;
 using GameUI.Controller;
 using GameUi;
+using UnityEngine.UI;
+
 namespace Scene {
     public class GameScene : MonoBehaviour {
         #region Property
 
         public Canvas mainCavas;
+        [SerializeField]
+        private RectTransform blockParent;
 
         [HideInInspector]
         public List<Block> blockListInField = new List<Block>();
@@ -163,6 +166,8 @@ namespace Scene {
         /// </summary>
         /// <param name="block"></param>
         private void SetBlock(Block block) {
+            block.transform.SetParent(blockParent.transform);
+            block.transform.localScale = Vector3.one;
             int random = UnityEngine.Random.Range(0, blockDirectionCount);
             if (random == 0) {
                 block.direction = BlockDirection.LEFT;
