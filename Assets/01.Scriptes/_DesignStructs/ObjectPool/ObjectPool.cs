@@ -46,12 +46,7 @@ namespace DesignStruct {
             return obj;
         }
         public T TakeObject<T>() {
-            if (poolObjectList.Count <= 0) {
-                AddObject(1);
-            }
-            GameObject obj = poolObjectList[0];
-            poolObjectList.RemoveAt(0);
-            obj.SetActive(true);
+            GameObject obj = TakeObject();
             return obj.GetComponent<T>();
         }
          

@@ -25,3 +25,11 @@ public enum MonsterInfo
     ButtonPlus,
     DoubleAttack
 }
+
+public enum AbilityType {
+    DAMAGE,
+    ARMOUR,
+    MAXHP,
+    STAGE_RECOVERY_HP,
+    ABSORPTION_HP,
+}
