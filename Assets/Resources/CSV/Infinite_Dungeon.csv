@@ -1,0 +1,5 @@
+Monster,Attack,Defend,HP,Attack Speed,Defend Break,Dark,Button Plus,Double Attack,Stage Bonus,비고
+Undead,100,10,1000,3,10,None,None,None,0.05,스탯 + {스테이지 X (Stage Bonus) X 스탯}
+Minotauros,200,20,2000,5,10,None,None,None,0.07,스탯 + {스테이지 X (Stage Bonus) X 스탯}
+Behemoth,700,50,5000,4,30,TRUE,FALSE,TRUE,0.15,"10, 30, 50 ... 스테이지에서 등장 / 스탯 + {스테이지 X (Stage Bonus) X 스탯} / 한 마리만 등장"
+Fallen King,1500,100,20000,5,40,TRUE,TRUE,TRUE,0.2,"20, 40, 60 ... 스테이지에서 등장 / 스탯 + {스테이지 X (Stage Bonus) X 스탯} / 한 마리만 등장"
