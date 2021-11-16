@@ -13,9 +13,16 @@ namespace GameUI.Controller {
         public GameObject frontPanel;
         public GameObject pausePanel;
 
+        public void FadeIn(float time, float alhpa) {
+            FadeIn(fadePanel, time, alhpa);
+        }
+
         public void FadeIn(GameObject panel, float time, float alhpa) {
             panel.SetActive(true);
             var tween = LeanTween.alphaCanvas(panel.GetComponent<CanvasGroup>(), alhpa, time);
+        }
+        public void FadeOut(float time, float alhpa) {
+            FadeOut(fadePanel, time, alhpa);
         }
 
         public void FadeOut(GameObject panel, float time, float alhpa) {
