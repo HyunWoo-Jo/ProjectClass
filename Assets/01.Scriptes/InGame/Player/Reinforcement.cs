@@ -2,18 +2,35 @@
 ///작성자 조현우
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 public class Reinforcement : MonoBehaviour
 {
     public Dictionary<Stats, int> level = new Dictionary<Stats, int>();
 
     private void Awake() {
-        for(int i = 0; i < 5; i++) {
-            level.Add((Stats)i, 1);
-        }
+        LoadReinforce();
     }
     private void Start() {
         SetReinfoce();
+    }
+
+
+    private void LoadReinforce() {
+        foreach(Stats stat in Enum.GetValues(typeof(Stats))) {
+            level.Add(stat, 1);
+        }
+        foreach(Stats stat in Enum.GetValues(typeof(Stats))) {
+            if(PlayerPrefs.HasKey(stat.ToString())) {
+                level[stat] = PlayerPrefs.GetInt(stat.ToString());
+            }
+        }
+    }
+
+    public void SaveReinforce() {
+        foreach(Stats stat in Enum.GetValues(typeof(Stats))) {
+            PlayerPrefs.SetInt(stat.ToString(), level[stat]);
+        }
     }
 
     public float GetReinfoceStat(Stats stat) {

@@ -9,6 +9,6 @@ public class GameManager : Singleton<GameManager>
 
     protected override void Awake() {
         base.Awake();
-        gold.AddGold(1000); // юс╫ц
+        gold.Load();
     }
 }

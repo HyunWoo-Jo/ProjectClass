@@ -39,6 +39,7 @@ namespace GameUI.Controller {
             reinforcement.SetReinfoce();
             SoundManager.Play_EFF("Reinforce");
             SetText(slot);
+            reinforcement.SaveReinforce();
         }
         private void FailReinfoce() {
 

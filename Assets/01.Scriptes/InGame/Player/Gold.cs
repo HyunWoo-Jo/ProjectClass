@@ -2,6 +2,7 @@
 ///수정일 21.10.14
 ///작성자 조현우
 using System;
+using UnityEngine;
 
 public class Gold
 {
@@ -9,6 +10,15 @@ public class Gold
     public Action consumeHandler = null;
     public Action addHandler = null;
     public Action failHandler = null;
+
+    private void Save() {
+        PlayerPrefs.SetInt("gold", gold);
+    }
+    public void Load() {
+        if(PlayerPrefs.HasKey("gold")) {
+            gold = PlayerPrefs.GetInt("gold");
+        }
+    }
 
     public int GetGold() {
         return gold;
@@ -25,6 +35,7 @@ public class Gold
         } else {
             gold -= useGold;
             if (!(consumeHandler is null)) consumeHandler.Invoke();
+            Save();
             return true;
         }
     }
@@ -36,6 +47,7 @@ public class Gold
     public void AddGold(int addGold) {
         gold += addGold;
         if (!(addHandler is null)) addHandler.Invoke();
+        Save();
     }
 
 }
