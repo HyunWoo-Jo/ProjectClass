@@ -10,13 +10,15 @@ public class CsvReader : Singleton<CsvReader>
 
     //key: 던전num, List: 0-이름,1-max stage
     [HideInInspector] public Dictionary<int, List<string>> dic_dungenInfo = new Dictionary<int, List<string>>();
-    
+
+    [HideInInspector] public Dictionary<string, List<string>> dic_list_skillsInfo = new Dictionary<string, List<string>>();
 
     protected override void Awake()
     {
         base.Awake();
         SetupMonsterInfo();
         SetupDungeonInfo();
+        SetupSkillsInfo();
     }
 
     private void SetupMonsterInfo()
@@ -61,6 +63,25 @@ public class CsvReader : Singleton<CsvReader>
             dic_dungenInfo.Add(key, new List<string>());
             dic_dungenInfo[key].Add(strs[1]);
             dic_dungenInfo[key].Add(strs[2]);
+        }
+    }
+
+    private void SetupSkillsInfo() {
+        TextAsset txtFill = Resources.Load<TextAsset>("CSV/Skill_Table");
+        string[] lines = txtFill.text.Split('\n');
+        if(lines.Length <= 0) return;
+
+        string[] keys = lines[0].Split(',');
+
+        for(int i = 0; i < keys.Length; i++) {
+            dic_list_skillsInfo.Add(keys[i], new List<string>());
+        }
+
+        for(int i =1;i < lines.Length; i++) {
+            string[] values = lines[i].Split(',');
+            for(int y = 0; y < keys.Length; y++) {
+                dic_list_skillsInfo[keys[y]].Add(values[y]);
+            }
         }
     }
 }

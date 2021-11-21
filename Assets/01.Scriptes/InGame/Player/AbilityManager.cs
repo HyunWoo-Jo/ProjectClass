@@ -1,28 +1,35 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 public class AbilityManager : MonoBehaviour
 {
     public List<Ability> abilityList = new List<Ability>();
     private Dictionary<string, Sprite> abilityImgDictionary = new Dictionary<string, Sprite>();
     // Start is called before the first frame update
-    void Awake()
-    {
-        LoadAbility();
 
-        abilityList.Add(new Ability("공격력 증가", 1, 10, AbilityType.DAMAGE));
-        abilityList.Add(new Ability("방어력 증가", 1, 10, AbilityType.ARMOUR));
-        abilityList.Add(new Ability("HP 증가", 1, 10, AbilityType.MAXHP));
-        abilityList.Add(new Ability("생명력 흡수 증가", 1, 0.1f, AbilityType.ABSORPTION_HP));
-        abilityList.Add(new Ability("스테이지 회복량 증가", 1, 10f, AbilityType.STAGE_RECOVERY_HP));
+    void Awake() {
+        LoadAbility();
     }
+
     private void LoadAbility() {
         Sprite[] imgs = Resources.LoadAll<Sprite>("Ability");
 
         for(int i = 0; i < imgs.Length; i++) {
             abilityImgDictionary.Add(imgs[i].name, imgs[i]);
         }
+        var info = CsvReader.instance.dic_list_skillsInfo;
+
+        
+        for(int i = 0; i < info["Skill"].Count; i++) {
+            string name = info["Skill"][i];
+            float damage = 0.0f;
+            if(!float.TryParse(info["Damage"][i], out damage)) return;
+            AbilityType type;
+            if(!Enum.TryParse(info["Type"][i], out type)) return;
+            abilityList.Add(new Ability(name, 0, damage, type));
+         }
     }
 
     public Sprite GetSpirte(Ability ability ) {
