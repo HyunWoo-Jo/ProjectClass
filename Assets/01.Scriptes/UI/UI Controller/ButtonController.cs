@@ -93,6 +93,9 @@ namespace GameUI.Controller {
         public void OnQuit() {
             SceneManager.LoadScene("HomeScene");
         }
+        public void OnResetGame() {
+            SceneManager.LoadScene("GameScene");
+        }
 
         public void ResetAction() {
             leftButtonHandler = null;

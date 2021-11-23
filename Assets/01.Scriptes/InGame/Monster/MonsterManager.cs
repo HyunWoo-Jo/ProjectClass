@@ -36,7 +36,7 @@ public class MonsterManager : MonoBehaviour
 
     
     private void Start()
-    {        
+    {     
         StartDungeon(4); //임시, 추후 씬로드시 불려야함
     }
 
@@ -83,18 +83,33 @@ public class MonsterManager : MonoBehaviour
         {
             curMonList[0].gameObject.SetActive(false);
             curMonList.RemoveAt(0);
-            if (curMonList.Count == 0)
-            {
-                stage++;
-                if (stage <= maxStage)
-                {
-                    stageInfoKey = dungeonNum + "-" + stage.ToString();
-                    SetupStageMonsters();
-                }
-                else
-                {
-                    //GameEnd, dungeon clear 알림 필요
-                }
+            /// MonsterManager -> SpawnNextStageMonster() 로 변경
+            //if (curMonList.Count == 0)
+            //{
+            //    stage++;
+            //    if (stage <= maxStage)
+            //    {
+            //        stageInfoKey = dungeonNum + "-" + stage.ToString();
+            //        SetupStageMonsters();
+            //    }
+            //    else
+            //    {
+            //        //GameEnd, dungeon clear 알림 필요
+            //    }
+            //}
+        }
+    }
+    /// <summary>
+    /// Game Scene에서 몬스터 생성을 제어하기 위해서 변경
+    /// </summary>
+    public void SpawnNextStageMonster() {
+        if(curMonList.Count == 0) {
+            stage++;
+            if(stage <= maxStage) {
+                stageInfoKey = dungeonNum + "-" + stage.ToString();
+                SetupStageMonsters();
+            } else {
+                //GameEnd, dungeon clear 알림 필요
             }
         }
     }
@@ -112,4 +127,12 @@ public class MonsterManager : MonoBehaviour
             skManager.PlaySkill(info);
     }
 
+    /// <summary>
+    /// 작성자 조현우 22.11.22
+    /// </summary>
+    /// 게임 씬에서 사용
+    /// <returns></returns>
+    public List<Monster> GetMonsterList() {
+        return curMonList;
+    }
 }

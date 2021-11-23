@@ -14,6 +14,8 @@ namespace GameUI.Controller {
         private Text comboCountText;
         [SerializeField]
         private Image hp;
+        [SerializeField]
+        private Image hpBack;
 
         [Header("Combo Settings")]
         [SerializeField]
@@ -33,6 +35,10 @@ namespace GameUI.Controller {
             gameScene.failHandler += ChangeComboCountText;
             gameScene.failHandler += ChangeHpBar; // 임시 테스트용
             comboOutline = comboCountText.GetComponent<Outline>();
+            Player.instance.changeHp += ChangeHpBar;
+        }
+        void OnDestroy() {
+            Player.instance.changeHp = null;
         }
         
         private void ChangeComboCountText() {
@@ -52,8 +58,31 @@ namespace GameUI.Controller {
         }
 
         private void ChangeHpBar() {
-            float percent = Player.instance.CurrentHp / Player.instance.MaxHp;
-            hp.fillAmount = percent;
+            if(hpAction != null) {
+                targetHp = Player.instance.CurrentHp;
+            } else {
+                targetHp = Player.instance.CurrentHp;
+                lastHp = Player.instance.LastHp;
+                hpAction = StartCoroutine(ChangeHpBarAction(hp));
+            }
+            if(Player.instance.CurrentHp <= 0) {
+                gameScene.GameOver();
+            }
+        }
+        Coroutine hpAction;
+        float targetHp;
+        float lastHp;
+        IEnumerator ChangeHpBarAction(Image img) {
+            while(true) {
+                lastHp = Mathf.Lerp(lastHp, targetHp, 5f * Time.deltaTime);
+                img.fillAmount = lastHp / Player.instance.MaxHp;
+                if(lastHp <= targetHp) {
+                    hpAction = null;
+                    img.fillAmount = targetHp / Player.instance.MaxHp;
+                    break;
+                }
+                yield return null;
+            }
         }
 
         public void DamageByMonster(float atk, float defendBreak)
@@ -72,8 +101,7 @@ namespace GameUI.Controller {
                 if (percent < 20) ratio = 1f;
             }
             int curDamage = (int)(atk * ratio);
-            Player.instance.CurrentHp -= curDamage;
-            ChangeHpBar();
+            Player.instance.CurrentHp -= curDamage;   
         }
     }
 }

@@ -9,22 +9,40 @@ using Spawner;
 using GameUI.Controller;
 using GameUi;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 namespace Scene {
     public class GameScene : MonoBehaviour {
         #region Property
 
         public Canvas mainCavas;
+        [Header("Controller/ Manager")]
+        [SerializeField]
+        private ButtonController buttonController;
+        [SerializeField]
+        private PanelController panelController;
+        [SerializeField]
+        private RouletteController rouletteController;
+        [SerializeField]
+        private AbilityManager abilityManager;
+
+        [SerializeField]
+        private FX_Manager fx_Manager;
+
+        public MonsterManager monManager = null; //2021.11.07 변경
+
+        [Header("UI_Controllers")]
+        [SerializeField]
+        private StageController UI_stageController;
+
+        [Header("Block")]
         [SerializeField]
         private RectTransform blockParent;
 
-        [HideInInspector]
         public List<Block> blockListInField = new List<Block>();
 
         [SerializeField]
         private BlockSpawner blockSpawner;
-        [SerializeField]
-        private ButtonController buttonController;
 
         [SerializeField]
         private Transform blockTarget;
@@ -32,29 +50,23 @@ namespace Scene {
         [HideInInspector]
         public bool isPause = false;
 
-        private int maxStage = 5; // 임시
-        private int currentStage = 0; // 임시
+        private int currentStage = 1; // 임시
         private float blockDistance = 1.0f;
         private int blockDirectionCount = 2; // 2 = LEFT, RIGHT / 3 = ... + Center
-        
+
+        [SerializeField] private Vector3 blockScale = Vector3.one;
+        [SerializeField] private int blockSpawnSize = 3;
         public List<Color> leftColorList = new List<Color>();
         public List<Color> centerColorList = new List<Color>();
         public List<Color> rightColorList = new List<Color>();
 
-        public MonsterManager monManager = null; //2021.11.07 변경
+        
         public Combo playerCombo = new Combo();
 
         
 
         public Action sucessHandler;
         public Action failHandler;
-
-        #region Controllers;
-        [Header("UI_Controllers")]
-        [SerializeField]
-        private StageController UI_stageController;
-        #endregion
-
         #endregion
 
         #region Unity Method
@@ -62,14 +74,22 @@ namespace Scene {
             Init();
         }
 
-        private void Start() {
-            for (int i = 0; i < 3; i++) {
-                Block block = SpawnBlock();
+#if UNITY_EDITOR
+        /// <summary>
+        /// Text Cord
+        /// </summary>
+        private void Update() {
+            if(Input.GetKeyDown(KeyCode.LeftArrow)) {
+                LeftButton();
             }
-            SetBlockPos();
-            GameStart();
-            //StartCoroutine(TestAddButton());
+            if(Input.GetKeyDown(KeyCode.RightArrow)) {
+                RightButton();
+            }
+            if(Input.GetKeyDown(KeyCode.DownArrow)) {
+                CenterButton();
+            }
         }
+#endif
         #endregion
 
         public IEnumerator TestAddButton() {
@@ -94,8 +114,7 @@ namespace Scene {
                     ReturnBlock(i);
                     SpawnBlock();
                 }
-            }
-            BlockMove2Target();
+            } 
             buttonController.DeleteCenterButton();
         }
         #region GameLogic
@@ -109,33 +128,44 @@ namespace Scene {
             
             buttonController.pauseButtonHandler += PauseGame;
             buttonController.resetartButtonHandler += RestartGame;
-            
 
+            rouletteController.selectCallback += BlockCreate;
 
             sucessHandler += Succes;
             failHandler += Fail;
         }
         /// <summary>
-        /// 게임 리셋
-        /// </summary>
-        private void ResetGame() {
-            TweenManager.Clear();
-            while (blockListInField.Count != 0) {
-                ReturnBlock(0);
-                playerCombo.ResetCombo();
-            }
-            GameStart();
-        }
-        /// <summary>
         /// 게임 시작
         /// </summary>
-        private void GameStart() {
-            ShowAndSetStageUI();
+
+        private void BlockCreate() {
+            monManager.SpawnNextStageMonster();
+            for(int i = 0; i < blockSpawnSize; i++) {
+                SpawnBlock();
+            }
         }
 
         private void NextStage() {
             currentStage++;
             ShowAndSetStageUI();
+            ReturnBlock();
+            TweenManager.Add(
+                LeanTween.delayedCall(2f, () => {
+                    ShowAndSetStageUI();
+                    rouletteController.Roulette();
+                }
+                ));
+        }
+        /// <summary>
+        /// 몬스터가 모두 제거 되었나 확인
+        /// </summary>
+        /// <returns>true = clear, false = not claer </returns>
+        private bool ChkNextStage() {
+            
+            if(monManager.GetMonsterList().Count <= 0) {
+                return true;
+            }
+            return false;
         }
 
         public void PauseGame() {
@@ -147,6 +177,16 @@ namespace Scene {
             isPause = false;
             TweenManager.Resume();
         }
+
+        public void GameOver() {
+            isPause = true;
+            TweenManager.Pause();
+            panelController.FadeIn(panelController.gameOverPanel, 0.2f, 1f);
+            panelController.FadeIn(0.2f, 1f);
+        }
+
+       
+       
         #endregion
 
         #region Block Logic
@@ -158,6 +198,7 @@ namespace Scene {
             Block block = obj.GetComponent<Block>();
             blockListInField.Add(block);
             SetBlock(block);
+            BlockMove2Target();
             return block;
         }
 
@@ -197,10 +238,29 @@ namespace Scene {
             }
             block.SetColor(color);
         }
-
+        /// <summary>
+        /// index 블록 반환
+        /// </summary>
+        /// <param name="index"></param>
         private void ReturnBlock(int index) {
-            blockListInField[index].GetComponent<ObjectPoolItem>().ReturnObject();
+
+            ObjectPoolItem poolItem = blockListInField[index].GetComponent<ObjectPoolItem>();
             blockListInField.RemoveAt(index);
+            LeanTween.scale(poolItem.gameObject, Vector3.zero, 0.1f)
+            .setOnComplete(
+                () => {
+                    poolItem.ReturnObject();
+                });
+            
+        }
+        /// <summary>
+        /// 모든 블록 반환
+        /// </summary>
+        private void ReturnBlock() {
+            
+            while(blockListInField.Count != 0) {
+                ReturnBlock(0);
+            }
         }
 
         private void SetBlockPos() {
@@ -214,8 +274,8 @@ namespace Scene {
             for (int i = 0; i < blockListInField.Count; i++) {
                 Vector3 pos = blockListInField[i].transform.position - blockTarget.transform.position;
                 Vector3 targetPos = blockTarget.transform.position + (pos.normalized * i * blockDistance);
-                var tween = LeanTween.move(blockListInField[i].gameObject, targetPos, 0.1f); 
-                tween.setEase(LeanTweenType.easeInQuad);
+                LeanTween.move(blockListInField[i].gameObject, targetPos, 0.1f)
+                    .setEase(LeanTweenType.easeInQuad); 
             }
         }
         
@@ -264,15 +324,21 @@ namespace Scene {
             playerCombo.AddCombo(1);
 
             //playerCombo.GetComboDamage(); Player Damage * Combo Damage 배율 / 리턴값 float
-            if(monManager != null) monManager.GetDamage(playerCombo.GetComboDamage()); 
+            if(monManager != null) {
+                monManager.GetDamage(playerCombo.GetComboDamage());
+                Lightning();
+                if(ChkNextStage()) {
+                    NextStage();
+                    return;
+                }
+            }
 
             ReturnBlock(0);
             SpawnBlock();
-            BlockMove2Target();
-
             SoundManager.instance.PlayEFF("BlockButton");
         }
 
+        
 
         /// <summary>
         /// 같은 색 버튼 클릭 실패
@@ -283,12 +349,26 @@ namespace Scene {
             SoundManager.instance.PlayEFF("Hit_Player");
         }
         #endregion
+        #region EFX
+        private void Lightning() {
+            if(abilityManager.lightningCount <= 0) return;
+            if(monManager != null) {
+                var monList = monManager.GetMonsterList();
+                if(monList.Count >= 0) {
+                    for(int i = 1; i < monList.Count; i++) {
+                        fx_Manager.Lightning(blockTarget, monList[i].transform);
+                    }
+                }
+            }
+        }
+        #endregion
+
         #region UI
 
         private void ShowAndSetStageUI() {
-            UI_stageController.SetStageText(currentStage, maxStage);
+            UI_stageController.SetStageText(currentStage);
             UI_stageController.FlashText();
-        }
+        } 
 
         #endregion
     }

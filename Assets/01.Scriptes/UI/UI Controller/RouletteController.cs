@@ -4,9 +4,12 @@ using UnityEngine;
 using UnityEngine.UI;
 using DesignStruct;
 using UnityEngine.EventSystems;
-
+using Scene;
+using System;
 namespace GameUI.Controller {
     public class RouletteController : MonoBehaviour {
+        [SerializeField]
+        private GameScene scene; 
         [SerializeField]
         private CanvasGroup canvasGroup;
         [SerializeField]
@@ -18,12 +21,14 @@ namespace GameUI.Controller {
         [SerializeField]
         private RectTransform[] imgParents;
         [SerializeField]
-        private Text[] texts;     
+        private Text[] texts; 
 
         private List<List<Ability>> lineList = new List<List<Ability>>();
         private List<List<GameObject>> lineObjList = new List<List<GameObject>>();
         private List<ObjectPoolItem> itemList = new List<ObjectPoolItem>();
         private bool isSelected = false;
+
+        public Action selectCallback;
         private void Awake() {
             Init();
         }
@@ -37,6 +42,7 @@ namespace GameUI.Controller {
             }
         }
         public void Roulette() {
+            scene.PauseGame();
             isSelected = false;
             panelCtrl.FadeIn(0.5f, 0.7f);
             panelCtrl.FadeIn(canvasGroup.gameObject, 0.5f, 1f);
@@ -79,20 +85,24 @@ namespace GameUI.Controller {
                 EventTrigger trigger = imgParents[i].GetComponent<EventTrigger>();
                 EventTrigger.Entry entry = new EventTrigger.Entry();
                 entry.eventID = EventTriggerType.PointerDown;
-                entry.callback.AddListener((eventData) => { AbilityClick(i); });
+                int index = i;
+                entry.callback.AddListener((eventData) => {
+                    AbilityClick(index); });
                 trigger.triggers.Add(entry);
             }
         }
 
         private void AbilityClick(int index) {
             if(!isSelected) {
-
+                scene.RestartGame();
+                abilityManager.AddAbility(lineList[index][lineList[index].Count - 1]);
                 panelCtrl.FadeOut(0.2f, 0f);
                 panelCtrl.FadeOut(canvasGroup.gameObject, 0.2f, 0f);
                 for(int i = 0; i < itemList.Count; i++) {
                     itemList[i].ReturnObject();
                 }
                 itemList.Clear();
+                if(selectCallback != null) selectCallback.Invoke();
                 isSelected = true;
             }
         }

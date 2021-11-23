@@ -29,7 +29,7 @@ namespace DesignStruct {
             for(int i = 0; i < count; i++) {
                 GameObject obj = Instantiate(poolObject);
                 obj.transform.SetParent(this.transform);
-
+                obj.gameObject.name += poolObjectList.Count.ToString();
                 poolObjectList.Add(obj);
                 obj.AddComponent<ObjectPoolItem>().Init(this);
                 obj.SetActive(false);

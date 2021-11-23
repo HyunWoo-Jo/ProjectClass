@@ -7,10 +7,61 @@ public class AbilityManager : MonoBehaviour
 {
     public List<Ability> abilityList = new List<Ability>();
     private Dictionary<string, Sprite> abilityImgDictionary = new Dictionary<string, Sprite>();
+
+    public List<Ability> currentAblity = new List<Ability>();
     // Start is called before the first frame update
+
+    [HideInInspector] 
+    public int lightningCount = 0;
+    [HideInInspector] 
+    public int poisonCount = 0;
+    [HideInInspector] 
+    public int freezingCount = 0;
+
 
     void Awake() {
         LoadAbility();
+    }
+
+    protected void OnDestroy() {
+        Player.instance.ResetStats();
+    }
+
+    public void AddAbility(Ability abill) {
+        currentAblity.Add(abill);
+
+        switch(abill.type) {
+            case AbilityType.Damage1:
+            case AbilityType.Damage2:
+            case AbilityType.Damage3:
+                Player.instance.Damage *= (abill.increasedAmount * 0.01f) + 1;
+                break;
+            case AbilityType.Armour1:
+            case AbilityType.Armour2:
+            case AbilityType.Armour3:
+                Player.instance.Armour *= (abill.increasedAmount * 0.01f) + 1;
+                break;
+            case AbilityType.Poison:
+                poisonCount++;
+                break;
+            case AbilityType.Lightning:
+                lightningCount++;
+                break;
+            case AbilityType.Freezing:
+                freezingCount++;
+                break;
+            case AbilityType.Hp1:
+            case AbilityType.Hp2:
+            case AbilityType.Hp3:
+                Player.instance.MaxHp *= (abill.increasedAmount * 0.01f) + 1;
+                break;
+            case AbilityType.Recovery1:
+            case AbilityType.Recovery2:
+            case AbilityType.Recovery3:
+                Player.instance.CurrentHp += Player.instance.MaxHp * ((abill.increasedAmount * 0.01f) +1);
+                break;
+        }
+
     }
 
     private void LoadAbility() {

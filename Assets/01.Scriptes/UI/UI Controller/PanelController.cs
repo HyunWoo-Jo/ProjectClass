@@ -12,6 +12,7 @@ namespace GameUI.Controller {
         public GameObject midPanel;
         public GameObject frontPanel;
         public GameObject pausePanel;
+        public GameObject gameOverPanel;
 
         public void FadeIn(float time, float alhpa) {
             FadeIn(fadePanel, time, alhpa);

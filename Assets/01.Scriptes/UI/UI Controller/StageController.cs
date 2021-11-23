@@ -13,8 +13,8 @@ namespace GameUI.Controller {
             stageText.color = Color.clear;
         }
 
-        public void SetStageText(int currentStage, int maxStage) {
-            string str = string.Format("Stage {0} / {1}", currentStage, maxStage);
+        public void SetStageText(int currentStage) {
+            string str = string.Format("Stage {0}", currentStage);
             stageText.text = str;
         }
 
