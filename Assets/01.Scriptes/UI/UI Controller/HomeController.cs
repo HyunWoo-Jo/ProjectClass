@@ -3,7 +3,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using UnityEngine.SceneManagement;
 namespace GameUI.Controller {
     public class HomeController : MonoBehaviour {
         [SerializeField]
@@ -12,6 +12,9 @@ namespace GameUI.Controller {
         private GameObject reinforcementsPanel;
 
         List<GameObject> allPanelList = new List<GameObject>();
+
+        [SerializeField]
+        private GameObject dungeonEnterPanel;
 
         private void Awake() {
             allPanelList.Add(dungeonsPanel);
@@ -38,6 +41,21 @@ namespace GameUI.Controller {
             foreach (var item in allPanelList) {
                 item.SetActive(false);
             }
+        }
+        
+        public void OnOpenEnterPanel() {
+            //텍스트 내용 변경
+            dungeonEnterPanel.SetActive(true);
+            SoundManager.Play_EFF("Button");
+        }
+
+        public void OnEnter() {
+            SceneManager.LoadScene("GameScene");
+        }
+
+        public void OnBack() {
+            dungeonEnterPanel.SetActive(false);
+            SoundManager.Play_EFF("Button");
         }
     }
 }

@@ -50,6 +50,7 @@ namespace Scene {
         [HideInInspector]
         public bool isPause = false;
 
+        private bool isLose = false;
         private int currentStage = 1; // юс╫ц
         private float blockDistance = 1.0f;
         private int blockDirectionCount = 2; // 2 = LEFT, RIGHT / 3 = ... + Center
@@ -149,6 +150,7 @@ namespace Scene {
             currentStage++;
             ShowAndSetStageUI();
             ReturnBlock();
+            SoundManager.Play_EFF("Footsteps_MetalV1_Walk_03");
             TweenManager.Add(
                 LeanTween.delayedCall(2f, () => {
                     ShowAndSetStageUI();
@@ -180,9 +182,13 @@ namespace Scene {
 
         public void GameOver() {
             isPause = true;
-            TweenManager.Pause();
-            panelController.FadeIn(panelController.gameOverPanel, 0.2f, 1f);
-            panelController.FadeIn(0.2f, 1f);
+            if(!isLose) {
+                isLose = true;
+                TweenManager.Pause();
+                SoundManager.Play_EFF("stinger_lose");
+                panelController.FadeIn(panelController.gameOverPanel, 0.2f, 1f);
+                panelController.FadeIn(0.2f, 1f);
+            }
         }
 
        
@@ -287,8 +293,10 @@ namespace Scene {
         private void LeftButton() {
             if (isPause) return;
             if (blockListInField.Count == 0) return;
+            SoundManager.Play_EFF("BlockButton");
             if (blockListInField[0].direction.Equals(BlockDirection.LEFT)) {
                 sucessHandler.Invoke();
+                SoundManager.Play_EFF("SWORD_01");
             } else {
                 failHandler.Invoke();
             }
@@ -300,8 +308,10 @@ namespace Scene {
         private void RightButton() {
             if (isPause) return;
             if (blockListInField.Count == 0) return;
+            SoundManager.Play_EFF("BlockButton");
             if (blockListInField[0].direction.Equals(BlockDirection.RIGHT)) {
                 sucessHandler.Invoke();
+                SoundManager.Play_EFF("SWORD_02");
             } else {
                 failHandler.Invoke();
             }
@@ -310,8 +320,10 @@ namespace Scene {
         private void CenterButton() {
             if(isPause) return;
             if(blockListInField.Count == 0) return;
+            SoundManager.Play_EFF("BlockButton");
             if(blockListInField[0].direction.Equals(BlockDirection.Center)) {
                 sucessHandler.Invoke();
+                SoundManager.instance.PlayEFF("SWORD_05");
             } else {
                 failHandler.Invoke();
             }
@@ -334,8 +346,7 @@ namespace Scene {
             }
 
             ReturnBlock(0);
-            SpawnBlock();
-            SoundManager.instance.PlayEFF("BlockButton");
+            SpawnBlock();        
         }
 
         

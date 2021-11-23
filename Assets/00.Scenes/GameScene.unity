@@ -813,9 +813,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: '0
-
-    Combo'
+  m_Text: 
 --- !u!222 &263365096
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1486,7 +1484,7 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: dd69f5094c94c524caa27e947585ff73, type: 3}
+  m_audioClip: {fileID: 8300000, guid: 8eb21f11617945b4cb1cb7a9c7865d2e, type: 3}
   m_PlayOnAwake: 1
   m_Volume: 1
   m_Pitch: 1

@@ -83,6 +83,7 @@ public class MonsterManager : MonoBehaviour
         {
             curMonList[0].gameObject.SetActive(false);
             curMonList.RemoveAt(0);
+            SoundManager.Play_EFF("foley_orc_death3"); // 몬스터 사망 시 
             /// MonsterManager -> SpawnNextStageMonster() 로 변경
             //if (curMonList.Count == 0)
             //{
