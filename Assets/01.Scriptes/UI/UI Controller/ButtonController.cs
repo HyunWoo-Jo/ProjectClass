@@ -19,7 +19,7 @@ namespace GameUI.Controller {
         public GameObject rightButton;
         public GameObject centerButton;
 
-
+        private bool isAction = false;
         public void AddCenterButton() {
             centerButton.SetActive(true);
             centerButton.transform.localScale = Vector3.zero;
@@ -79,18 +79,26 @@ namespace GameUI.Controller {
         public void OnPauseGame() {
             SoundManager.Play_EFF("Button");
             panelController.FadeIn(panelController.fadePanel,0.3f ,0.7f);
-            panelController.FadeIn(panelController.pausePanel, 0.3f, 1f);
+            panelController.pausePanel.SetActive(true);
+            panelController.pausePanel.Add_UI_Animation().Play(UI_Animation_Type.ScrollUpFromUnder, 0.3f);
             pauseButtonHandler.Invoke();
         }
-
         public void OnRestartGame() {
+            if(isAction) return;
+            isAction = true;
             SoundManager.Play_EFF("Button");
             resetartButtonHandler.Invoke();
             panelController.FadeOut(panelController.fadePanel, 0.1f, 0f);
-            panelController.FadeOut(panelController.pausePanel, 0.1f, 0f);
+            panelController.pausePanel.Add_UI_Animation().Play(UI_Animation_Type.ScrollUpFromCenter, 0.3f, () => { 
+                panelController.pausePanel.SetActive(false);
+                isAction = false;
+            });
+           
+            //panelController.FadeOut(panelController.pausePanel, 0.1f, 0f);
         }
 
         public void OnQuit() {
+            if(isAction) return;
             SceneManager.LoadScene("HomeScene");
         }
         public void OnResetGame() {

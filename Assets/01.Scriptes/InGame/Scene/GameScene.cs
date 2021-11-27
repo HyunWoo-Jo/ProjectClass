@@ -7,7 +7,7 @@ using UnityEngine;
 using DesignStruct;
 using Spawner;
 using GameUI.Controller;
-using GameUi;
+using GameUI;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
@@ -34,6 +34,8 @@ namespace Scene {
         [Header("UI_Controllers")]
         [SerializeField]
         private StageController UI_stageController;
+        [SerializeField]
+        private GameObject allPanelsParent;
 
         [Header("Block")]
         [SerializeField]
@@ -73,6 +75,10 @@ namespace Scene {
         #region Unity Method
         private void Awake() {
             Init();
+        }
+
+        private void Start() {
+            rouletteController.Roulette();
         }
 
 #if UNITY_EDITOR

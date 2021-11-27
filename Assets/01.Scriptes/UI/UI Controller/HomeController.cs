@@ -4,57 +4,87 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using GameUI;
 namespace GameUI.Controller {
     public class HomeController : MonoBehaviour {
+        private enum UI_Type {
+            Home,
+            Reinforce,
+        }
+        private UI_Type currentState = UI_Type.Home;
+        private GameObject currentPopup;
+        private bool isAction = false;
         [SerializeField]
         private GameObject dungeonsPanel;
+
         [SerializeField]
         private GameObject reinforcementsPanel;
 
-        List<GameObject> allPanelList = new List<GameObject>();
 
         [SerializeField]
         private GameObject dungeonEnterPanel;
 
+        [SerializeField]
+        private GameObject allPanelsParent;
+
         private void Awake() {
-            allPanelList.Add(dungeonsPanel);
-            allPanelList.Add(reinforcementsPanel);
+            currentPopup = dungeonsPanel;
         }
 
-        public void OnOpenDungeon() {
-            if(!dungeonsPanel.activeSelf) {
+        public void OnOpenDungeon(GameObject obj) {
+            if(currentState != UI_Type.Home && !isAction) {
+                isAction = true;
                 SoundManager.Play_EFF("Button");
+                currentPopup.Add_UI_Animation().Play(UI_Animation_Type.ScrollRightFromCenter, 0.5f);
+
+                dungeonsPanel.Add_UI_Animation().Play(UI_Animation_Type.ScrollRightFromLeft, 0.5f, () => { isAction = false; });
+                currentPopup = dungeonsPanel;
+                currentState = UI_Type.Home;
+
+                obj.Add_UI_Animation().Click();
             }
-            OffAllPanel();
-            dungeonsPanel.SetActive(true);
-            
         }
-        public void OnOpenReinforce() {
-            if(!reinforcementsPanel.activeSelf) {
+        public void OnOpenReinforce(GameObject obj) {
+            if(currentState != UI_Type.Reinforce && !isAction) {
+                reinforcementsPanel.SetActive(true);
+                isAction = true;
                 SoundManager.Play_EFF("Button");
+                currentPopup.Add_UI_Animation().Play(UI_Animation_Type.ScrollLeftFromCenter, 0.5f);
+
+                reinforcementsPanel.Add_UI_Animation().Play(UI_Animation_Type.ScrollLeftFromRight, 0.5f, () => { isAction = false; });
+                currentPopup = reinforcementsPanel;
+                currentState = UI_Type.Reinforce;
+
+                obj.Add_UI_Animation().Click();
             }
-            OffAllPanel();      
-            reinforcementsPanel.SetActive(true);
         }
 
-        private void OffAllPanel() {
-            foreach (var item in allPanelList) {
-                item.SetActive(false);
-            }
-        }
-        
-        public void OnOpenEnterPanel() {
+        public void OnOpenEnterPanel(GameObject obj) {
             //텍스트 내용 변경
-            dungeonEnterPanel.SetActive(true);
-            SoundManager.Play_EFF("Button");
+            if(!dungeonEnterPanel.activeSelf) {
+                dungeonEnterPanel.SetActive(true);
+                dungeonEnterPanel.Add_UI_Animation().Play(UI_Animation_Type.ScrollUpFromUnder, 0.5f);
+                obj.Add_UI_Animation().Click();
+                
+
+                SoundManager.Play_EFF("Button");
+            }
         }
 
         public void OnEnter() {
             SceneManager.LoadScene("GameScene");
         }
 
-        public void OnBack() {
-            dungeonEnterPanel.SetActive(false);
+        public void OnBack(GameObject obj) {
+            obj.Add_UI_Animation().Click();
+            dungeonEnterPanel.Add_UI_Animation().Play(UI_Animation_Type.ScaleDown, 0.2f, 
+                () => { 
+                    dungeonEnterPanel.SetActive(false);
+                    dungeonEnterPanel.transform.localScale = Vector3.one;
+                
+                }
+                
+                );
             SoundManager.Play_EFF("Button");
         }
     }

@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace GameUi {
+namespace GameUI {
     public class Popup<T> : MonoBehaviour {
         public bool isAutoKill = false;
         public float autoKillTime = 5f;

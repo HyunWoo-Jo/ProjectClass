@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-namespace GameUi {
+namespace GameUI {
     public class SpeechPopup : Popup<SpeechPopup> {
 
         [SerializeField]

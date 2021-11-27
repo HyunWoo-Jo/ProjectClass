@@ -32,9 +32,6 @@ namespace GameUI.Controller {
         private void Awake() {
             Init();
         }
-        private void Start() {
-            Roulette();
-        }
         private void Init() {
             for(int i = 0; i < 3; i++) {
                 lineList.Add(new List<Ability>());
@@ -87,14 +84,15 @@ namespace GameUI.Controller {
                 entry.eventID = EventTriggerType.PointerDown;
                 int index = i;
                 entry.callback.AddListener((eventData) => {
-                    AbilityClick(index); });
+                    AbilityClick(index, trigger.gameObject); });
                 trigger.triggers.Add(entry);
             }
         }
 
-        private void AbilityClick(int index) {
+        private void AbilityClick(int index, GameObject obj) {
             if(!isSelected) {
                 scene.RestartGame();
+                obj.Add_UI_Animation().Click();
                 abilityManager.AddAbility(lineList[index][lineList[index].Count - 1]);
                 panelCtrl.FadeOut(0.2f, 0f);
                 panelCtrl.FadeOut(canvasGroup.gameObject, 0.2f, 0f);
