@@ -40,6 +40,7 @@ namespace GameUI.Controller {
             SoundManager.Play_EFF("Reinforce");
             SetText(slot);
             reinforcement.SaveReinforce();
+            slot.gameObject.Add_UI_Animation().Click();
         }
         private void FailReinfoce() {
 

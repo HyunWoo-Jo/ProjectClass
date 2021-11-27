@@ -44,7 +44,6 @@ namespace GameUI {
 
                 case UI_Animation_Type.ScrollUpFromUnder:
                     this.transform.position = originPosition - new Vector3(0, Camera.main.orthographicSize * 2, 0);
-                    Debug.Log(transform.position.y);
                     tween = LeanTween.move(this.gameObject, originPosition, time).setEase(LeanTweenType.easeInOutBack);
                     break;
                 case UI_Animation_Type.ScrollUpFromCenter:
