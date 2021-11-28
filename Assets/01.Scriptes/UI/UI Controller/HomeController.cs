@@ -27,6 +27,8 @@ namespace GameUI.Controller {
         [SerializeField]
         private GameObject allPanelsParent;
 
+        [SerializeField]
+        private GameObject fadePanel;
         private void Awake() {
             currentPopup = dungeonsPanel;
         }
@@ -72,6 +74,11 @@ namespace GameUI.Controller {
         }
 
         public void OnEnter() {
+            fadePanel.AddFadeUI().FadeIn(1f, 1);
+            Invoke("LoadGameScene", 1.5f);
+        }
+        
+        private void LoadGameScene() {
             SceneManager.LoadScene("GameScene");
         }
 
@@ -81,7 +88,7 @@ namespace GameUI.Controller {
                 () => { 
                     dungeonEnterPanel.SetActive(false);
                     dungeonEnterPanel.transform.localScale = Vector3.one;
-                
+                    
                 }
                 
                 );
