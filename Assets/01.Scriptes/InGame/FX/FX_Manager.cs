@@ -16,6 +16,7 @@ public class FX_Manager : MonoBehaviour
     }
 
     public void Lightning(Transform start ,Transform end) {
+        SoundManager.Play_EFF("L_S");
         lightnings[currentLightingNumber].StartObject.transform.position = start.position;
         StartCoroutine(LightningAction(end.position));
     }

@@ -43,9 +43,11 @@ namespace GameUI.Controller {
             isSelected = false;
             panelCtrl.FadeIn(0.5f, 0.7f);
             panelCtrl.FadeIn(canvasGroup.gameObject, 0.5f, 1f);
-            
+
+            SoundManager.Play_EFF("R_S");
+
             for(int i =0;i< 3;i++) {
-                for(int y = 0; y < (20 + i); y++) {
+                for(int y = 0; y < (30 + i); y++) {
                     Ability abili = abilityManager.abilityList[UnityEngine.Random.Range(0, abilityManager.abilityList.Count)];
                     RectTransform obj = CreateRouletImg(abili);
                     AddAbili(i, abili, obj.gameObject);
@@ -91,6 +93,7 @@ namespace GameUI.Controller {
 
         private void AbilityClick(int index, GameObject obj) {
             if(!isSelected) {
+                SoundManager.Play_EFF("S_S");
                 scene.RestartGame();
                 obj.Add_UI_Animation().Click();
                 abilityManager.AddAbility(lineList[index][lineList[index].Count - 1]);
