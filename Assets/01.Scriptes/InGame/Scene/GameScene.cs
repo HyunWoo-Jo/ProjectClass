@@ -183,16 +183,19 @@ namespace Scene {
         public void PauseGame() {
             isPause = true;
             TweenManager.Pause();
+            monManager.SetPause(isPause);
         }
         
         public void RestartGame() {
             isPause = false;
             TweenManager.Resume();
+            monManager.SetPause(isPause);
         }
 
         public void GameOver() {
             isPause = true;
-            if(!isLose) {
+            monManager.SetPause(isPause);
+            if (!isLose) {
                 isLose = true;
                 TweenManager.Pause();
                 SoundManager.Play_EFF("stinger_lose");
@@ -347,8 +350,9 @@ namespace Scene {
 
             //playerCombo.GetComboDamage(); Player Damage * Combo Damage 배율 / 리턴값 float
             if(monManager != null) {
-                monManager.GetDamage(playerCombo.GetComboDamage());
-                Lightning();
+                monManager.GetDamage(playerCombo.GetComboDamage(),
+                    abilityManager.poisonCount, abilityManager.lightningCount, abilityManager.freezingCount);
+                //Lightning();
                 if(ChkNextStage()) {
                     NextStage();
                     return;

@@ -101,7 +101,8 @@ namespace GameUI.Controller {
                 if (percent < 20) ratio = 1f;
             }
             int curDamage = (int)(atk * ratio);
-            Player.instance.CurrentHp -= curDamage;   
+            Player.instance.CurrentHp -= curDamage;
+            SoundManager.instance.PlayEFF("Hit_Player");
         }
     }
 }
