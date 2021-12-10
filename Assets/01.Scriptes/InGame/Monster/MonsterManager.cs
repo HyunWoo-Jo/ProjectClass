@@ -94,6 +94,8 @@ public class MonsterManager : MonoBehaviour
         if (curMonList.Count == 0) return;
 
         bool isAlive = curMonList[0].GetDamage(atk);
+        fxManager.AtkFx(curMonList[0].transform);
+
         if (poisonCount > 0) curMonList[0].GetPoisonStatus(atk, poisonCount);
         if (freezingCount > 0) curMonList[0].GetFreezStatus(freezingCount);
         if (lightningCount > 0 && curMonList.Count > 1)

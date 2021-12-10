@@ -14,6 +14,10 @@ public class FX_Manager : MonoBehaviour
     private GameObject coinfxPrefab;
     private List<ParticleSystem> coinList = new List<ParticleSystem>();
 
+    [SerializeField]
+    private GameObject atkfxPrefab;
+    private List<ParticleSystem> atkList = new List<ParticleSystem>();
+
     private void Awake() {
         lightnings = GetComponentsInChildren<LightningBoltScript>();
         for(int i =0;i< lightnings.Length; i++) {
@@ -28,6 +32,16 @@ public class FX_Manager : MonoBehaviour
                 GameObject prefab = Instantiate(coinfxPrefab);
                 prefab.transform.SetParent(this.transform);
                 coinList.Add(prefab.GetComponent<ParticleSystem>());
+            }
+        }
+
+        if (atkfxPrefab != null)
+        {
+            for (int i = 0; i < 3; i++)
+            {
+                GameObject prefab = Instantiate(atkfxPrefab);
+                prefab.transform.SetParent(this.transform);
+                atkList.Add(prefab.GetComponent<ParticleSystem>());
             }
         }
     }
@@ -73,6 +87,25 @@ public class FX_Manager : MonoBehaviour
                 pos.z = 0f;
                 coinList[i].gameObject.transform.position = pos;
                 coinList[i].Play();
+                break;
+            }
+        }
+    }
+
+    public void AtkFx(Transform trans)
+    {
+        for (int i = 0; i < atkList.Count; i++)
+        {
+            if (atkList[i].isPlaying == false)
+            {
+                Vector3 pos = trans.position;
+                float randX = Random.Range(-1f, 1f);
+                float randY = Random.Range(-1f, 1f);
+                pos.x += randX;
+                pos.y += randY;
+                pos.z = 0f;
+                atkList[i].gameObject.transform.position = pos;
+                atkList[i].Play();
                 break;
             }
         }
