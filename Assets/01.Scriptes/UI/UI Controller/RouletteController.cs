@@ -62,7 +62,8 @@ namespace GameUI.Controller {
             StartCoroutine(MoveAllLine());
         }
         private IEnumerator MoveAllLine() {
-            while(true) {
+            bool isEnd = false;
+            while(!isEnd) {
                 for(int i =0; i < 3; i++) {
                     if(lineObjList[i][lineObjList[i].Count - 1].transform.localPosition.y > 0) {
                         for(int y = 0; y < lineObjList[i].Count; y++) {
@@ -75,6 +76,7 @@ namespace GameUI.Controller {
                         lineObjList[i][lineObjList[i].Count - 1].transform.localPosition = Vector3.zero;
                         if(i == 2) {
                             AddAbilityButton();
+                            isEnd = true;
                             break;
                         }
                     }
@@ -92,6 +94,7 @@ namespace GameUI.Controller {
                 entry.callback.AddListener((eventData) => {
                     AbilityClick(index, trigger.gameObject); });
                 trigger.triggers.Add(entry);
+                
             }
         }
 
@@ -112,8 +115,11 @@ namespace GameUI.Controller {
                     itemList[i].ReturnObject();
                 }
                 itemList.Clear();
+                Clear();
                 if(selectCallback != null) selectCallback.Invoke();
                 isSelected = true;
+
+                
             }
         }
 
@@ -121,6 +127,14 @@ namespace GameUI.Controller {
             texts[line].text = name;
         }
 
+        private void Clear() {
+            for(int i =0;i < 3; i++) {
+                EventTrigger trigger = imgParents[i].GetComponent<EventTrigger>();
+                trigger.triggers.Clear();
+                lineList[i].Clear();
+                lineObjList[i].Clear();
+            }
+        }
 
         private void AddAbili(int line, Ability abili, GameObject obj) {
             lineList[line].Add(abili);

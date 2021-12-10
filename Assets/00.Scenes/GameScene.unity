@@ -6066,7 +6066,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   poolObject: {fileID: 2798643954942526211, guid: c9f7fc14d45197a439bdb1dd4901aad0, type: 3}
   isAutoInstance: 1
-  instanceCount: 5
+  instanceCount: 10
 --- !u!4 &1996604536
 Transform:
   m_ObjectHideFlags: 0

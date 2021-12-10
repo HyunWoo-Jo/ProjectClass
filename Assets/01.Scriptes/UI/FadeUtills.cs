@@ -4,6 +4,7 @@ using UnityEngine;
 
 namespace GameUI {
     public class FadeUtills : MonoBehaviour {
+        [SerializeField]
         CanvasGroup canvasGroup;
 
         private void Awake() {
