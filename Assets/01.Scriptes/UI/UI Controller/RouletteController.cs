@@ -29,6 +29,10 @@ namespace GameUI.Controller {
         private bool isSelected = false;
 
         public Action selectCallback;
+
+        //장용진 : 2021.12.10 추가
+        private AudioSource temAudio = null;
+
         private void Awake() {
             Init();
         }
@@ -44,7 +48,7 @@ namespace GameUI.Controller {
             panelCtrl.FadeIn(0.5f, 0.7f);
             panelCtrl.FadeIn(canvasGroup.gameObject, 0.5f, 1f);
 
-            SoundManager.Play_EFF("R_S");
+            temAudio = SoundManager.Play_EFF("R_S");
 
             for(int i =0;i< 3;i++) {
                 for(int y = 0; y < (30 + i); y++) {
@@ -94,6 +98,11 @@ namespace GameUI.Controller {
         private void AbilityClick(int index, GameObject obj) {
             if(!isSelected) {
                 SoundManager.Play_EFF("S_S");
+                if(temAudio != null)
+                {//장용진 : 2021.12.10 추가
+                    temAudio.Stop();
+                    temAudio = null;
+                }
                 scene.RestartGame();
                 obj.Add_UI_Animation().Click();
                 abilityManager.AddAbility(lineList[index][lineList[index].Count - 1]);

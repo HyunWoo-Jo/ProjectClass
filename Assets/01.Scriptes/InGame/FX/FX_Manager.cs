@@ -8,10 +8,27 @@ public class FX_Manager : MonoBehaviour
     [SerializeField]
     private LightningBoltScript[] lightnings;
     private int currentLightingNumber = 0;
+
+    //장용진 : 2021.12.10 추가
+    [SerializeField]
+    private GameObject coinfxPrefab;
+    private List<ParticleSystem> coinList = new List<ParticleSystem>();
+
     private void Awake() {
         lightnings = GetComponentsInChildren<LightningBoltScript>();
         for(int i =0;i< lightnings.Length; i++) {
             lightnings[i].gameObject.SetActive(false);
+        }
+
+        //2021.12.10 추가
+        if (coinfxPrefab != null)
+        {
+            for (int i = 0; i < 3; i++)
+            {
+                GameObject prefab = Instantiate(coinfxPrefab);
+                prefab.transform.SetParent(this.transform);
+                coinList.Add(prefab.GetComponent<ParticleSystem>());
+            }
         }
     }
 
@@ -44,4 +61,21 @@ public class FX_Manager : MonoBehaviour
             currentLightingNumber = 0;
         }
     }
+
+    //장용진 : 2021.12.10 추가
+    public void CoinFx(Transform trans)
+    {
+        for (int i = 0; i < coinList.Count; i++)
+        {
+            if (coinList[i].isPlaying == false)
+            {
+                Vector3 pos = trans.position;
+                pos.z = 0f;
+                coinList[i].gameObject.transform.position = pos;
+                coinList[i].Play();
+                break;
+            }
+        }
+    }
+
 }

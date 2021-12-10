@@ -43,20 +43,24 @@ public class SoundManager : Singleton<SoundManager> {
         audioDictionary.Remove(name);
     }
 
-    public void PlayEFF(string name) {
+    public AudioSource PlayEFF(string name) {
+        //장용진 : 2021.12.10 변경
         AudioClip clip = audioDictionary[name];
-        if(clip == null) return;
+        if (clip == null) return null;
 
         if(currentAudioIndex >= audioList.Count) currentAudioIndex = 0;
 
         audioList[currentAudioIndex].clip = clip;
         audioList[currentAudioIndex].Play();
         
-        currentAudioIndex++;
+        //currentAudioIndex++;
+
+        return audioList[currentAudioIndex++];
     }
 
-    public static void Play_EFF(string name) {
-        instance.PlayEFF(name);
+    public static AudioSource Play_EFF(string name) {
+        //장용진 : 2021.12.10 변경
+        return instance.PlayEFF(name);
     }
     
 

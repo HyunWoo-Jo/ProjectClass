@@ -29,52 +29,12 @@ public class MonsterManager : MonoBehaviour
     public Transform blockTarget;
     public FX_Manager fxManager;
 
-    //private string dungeonNum;
     private int stage = 0;
-    //private int maxStage;
-    //private string stageInfoKey = "";
-
     private List<Monster> curMonList = new List<Monster>();
 
-    
-    //private void Start()
-    //{     
-    //    //StartDungeon(); //임시, 추후 씬로드시 불려야함
-    //}
-
-    //public void StartDungeon()
-    //{
-    //    //this.dungeonNum = dungeonNum.ToString();
-    //    //maxStage = int.Parse(CsvReader.instance.dic_dungenInfo[dungeonNum][1]);        
-
-    //    //stage = 1;
-    //    //stageInfoKey = dungeonNum.ToString() + "-" + stage.ToString();
-    //    SetupStageMonsters();
-    //}
 
     private void SetupStageMonsters()
     {
-        //Dictionary<string, List<Dictionary<MonsterInfo, string>>> dic = CsvReader.instance.dic_monsterInfo;
-        //int spotIndex = dic[stageInfoKey].Count - 1;
-
-        //for (int i = 0; i < monsterSpot[spotIndex].spot.Count; i++)
-        //{
-        //    curMonList.Add(monsterSpot[spotIndex].spot[i]);
-        //    curMonList[i].gameObject.SetActive(true);
-
-        //    Sprite sprite = null;
-        //    for (int j = 0; j < monSprite.Count; j++)
-        //    {
-        //        if (monSprite[j].name == dic[stageInfoKey][i][MonsterInfo.Monster])
-        //        {
-        //            sprite = monSprite[j].sprite;
-        //            break;
-        //        }
-        //    }
-
-        //    curMonList[i].SetReady(dic[stageInfoKey][i], sprite);
-        //}
-
         int curSpotIndex = Random.Range(0, monsterSpot.Count);
         bool isBoss = false;
         if (stage % 10 == 0)
@@ -112,6 +72,23 @@ public class MonsterManager : MonoBehaviour
 
     }
 
+    private void MonsterDeath(int index)
+    {
+        if (curMonList.Count < index) return;
+
+        int num = Random.Range(0, 2);
+        if (num == 0)
+        {
+            fxManager.CoinFx(curMonList[index].transform);
+            GameManager.instance.gold.AddGold(500);
+        }
+        
+        curMonList[index].gameObject.SetActive(false);
+        curMonList.RemoveAt(index);
+        SoundManager.Play_EFF("foley_orc_death3"); // 몬스터 사망 시 
+    }
+
+
     public void GetDamage(float atk, int poisonCount, int lightningCount, int freezingCount)
     {
         if (curMonList.Count == 0) return;
@@ -130,25 +107,23 @@ public class MonsterManager : MonoBehaviour
 
         if (isAlive == false)
         {
-            curMonList[0].gameObject.SetActive(false);
-            curMonList.RemoveAt(0);
-            SoundManager.Play_EFF("foley_orc_death3"); // 몬스터 사망 시 
-            /// MonsterManager -> SpawnNextStageMonster() 로 변경
-            //if (curMonList.Count == 0)
-            //{
-            //    stage++;
-            //    if (stage <= maxStage)
-            //    {
-            //        stageInfoKey = dungeonNum + "-" + stage.ToString();
-            //        SetupStageMonsters();
-            //    }
-            //    else
-            //    {
-            //        //GameEnd, dungeon clear 알림 필요
-            //    }
-            //}
+            MonsterDeath(0);
         }
     }
+
+    public void DieByElse(Monster mon)
+    {
+        if (curMonList.Count == 0) return;
+        for (int i = 0; i < curMonList.Count; i++)
+        {
+            if (curMonList[i] == mon)
+            {
+                MonsterDeath(i);
+                break;
+            }
+        }
+    }
+
     /// <summary>
     /// Game Scene에서 몬스터 생성을 제어하기 위해서 변경
     /// </summary>
@@ -156,31 +131,9 @@ public class MonsterManager : MonoBehaviour
         if(curMonList.Count == 0) {
             stage++;
             SetupStageMonsters();
-
-            //if(stage <= maxStage) {
-            //    stageInfoKey = dungeonNum + "-" + stage.ToString();
-            //    SetupStageMonsters();
-            //} else {
-            //    //GameEnd, dungeon clear 알림 필요
-            //}
         }
     }
-
-    public void DieByElse(Monster mon)
-    {
-        if (curMonList.Count == 0) return;
-        for(int i = 0; i < curMonList.Count; i++)
-        {
-            if(curMonList[i] == mon)
-            {
-                curMonList[i].gameObject.SetActive(false);
-                curMonList.RemoveAt(i);
-                SoundManager.Play_EFF("foley_orc_death3"); // 몬스터 사망 시 
-                break;
-            }           
-        }
-    }
-
+    
     public void AttakToPlayer(float atk, float defendBreak)
     {
         pCont.DamageByMonster(atk, defendBreak);
