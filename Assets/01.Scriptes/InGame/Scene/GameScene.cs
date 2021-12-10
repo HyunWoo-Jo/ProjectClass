@@ -263,14 +263,11 @@ namespace Scene {
         /// <param name="index"></param>
         private void ReturnBlock(int index) {
 
-            ObjectPoolItem poolItem = blockListInField[index].GetComponent<ObjectPoolItem>();
+            Block block = blockListInField[index];
+            ObjectPoolItem poolItem = block.GetComponent<ObjectPoolItem>();
             blockListInField.RemoveAt(index);
-            LeanTween.scale(poolItem.gameObject, Vector3.zero, 0.1f)
-            .setOnComplete(
-                () => {
-                    poolItem.ReturnObject();
-                });
-            
+            block.Anim(Block_Animation_Trigger.ScaleDown);
+            poolItem.DelayReturn(0.1f);
         }
         /// <summary>
         /// 모든 블록 반환

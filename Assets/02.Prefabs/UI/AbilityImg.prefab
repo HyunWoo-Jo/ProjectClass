@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8686162392490840159}
   - component: {fileID: 8686162392490840157}
+  - component: {fileID: 3591790165149846026}
   - component: {fileID: 8686162392490840156}
   m_Layer: 5
   m_Name: AbilityImg
@@ -45,6 +46,22 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8686162392490840158}
   m_CullTransparentMesh: 1
+--- !u!111 &3591790165149846026
+Animation:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8686162392490840158}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Animation: {fileID: 7400000, guid: b4c9ea236b42a524194852cf21e7969b, type: 2}
+  m_Animations:
+  - {fileID: 7400000, guid: b4c9ea236b42a524194852cf21e7969b, type: 2}
+  m_WrapMode: 0
+  m_PlayAutomatically: 0
+  m_AnimatePhysics: 0
+  m_CullingType: 0
 --- !u!114 &8686162392490840156
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -21,6 +21,7 @@ namespace Spawner {
         void SetSpawnerPosition(Vector3 position) {
             spawnPosition.position = position;
         }
+        
 
     }
 }

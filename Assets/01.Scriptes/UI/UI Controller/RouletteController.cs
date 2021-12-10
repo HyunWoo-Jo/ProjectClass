@@ -21,7 +21,9 @@ namespace GameUI.Controller {
         [SerializeField]
         private RectTransform[] imgParents;
         [SerializeField]
-        private Text[] texts; 
+        private Text[] texts;
+
+        private Animator anim;
 
         private List<List<Ability>> lineList = new List<List<Ability>>();
         private List<List<GameObject>> lineObjList = new List<List<GameObject>>();
@@ -35,21 +37,21 @@ namespace GameUI.Controller {
 
         private void Awake() {
             Init();
+           
         }
         private void Init() {
             for(int i = 0; i < 3; i++) {
                 lineList.Add(new List<Ability>());
                 lineObjList.Add(new List<GameObject>());
             }
+            anim = canvasGroup.GetComponent<Animator>();
         }
         public void Roulette() {
             scene.PauseGame();
             isSelected = false;
-            panelCtrl.FadeIn(0.5f, 0.7f);
-            panelCtrl.FadeIn(canvasGroup.gameObject, 0.5f, 1f);
-
             temAudio = SoundManager.Play_EFF("R_S");
-
+            canvasGroup.gameObject.SetActive(true);
+            SizeReset();
             for(int i =0;i< 3;i++) {
                 for(int y = 0; y < (30 + i); y++) {
                     Ability abili = abilityManager.abilityList[UnityEngine.Random.Range(0, abilityManager.abilityList.Count)];
@@ -61,6 +63,13 @@ namespace GameUI.Controller {
             }
             StartCoroutine(MoveAllLine());
         }
+        
+        private void SizeReset() {
+            for(int i =0;i < 3; i++) {
+                imgParents[i].localScale = Vector3.one;
+            }
+        }
+        
         private IEnumerator MoveAllLine() {
             bool isEnd = false;
             while(!isEnd) {
@@ -109,8 +118,9 @@ namespace GameUI.Controller {
                 scene.RestartGame();
                 obj.Add_UI_Animation().Click();
                 abilityManager.AddAbility(lineList[index][lineList[index].Count - 1]);
-                panelCtrl.FadeOut(0.2f, 0f);
-                panelCtrl.FadeOut(canvasGroup.gameObject, 0.2f, 0f);
+                anim.SetTrigger("AlphaDown");
+                imgParents[index].GetComponent<Animation>().Play();
+                StartCoroutine(DelayOffObject());
                 for(int i = 0; i < itemList.Count; i++) {
                     itemList[i].ReturnObject();
                 }
@@ -118,9 +128,11 @@ namespace GameUI.Controller {
                 Clear();
                 if(selectCallback != null) selectCallback.Invoke();
                 isSelected = true;
-
-                
             }
+        }
+        private IEnumerator DelayOffObject() {
+            yield return new WaitForSeconds(0.2f);
+            canvasGroup.gameObject.SetActive(false);
         }
 
         private void SetText(int line, string name) {

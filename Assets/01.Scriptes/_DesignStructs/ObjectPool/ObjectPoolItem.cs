@@ -2,6 +2,8 @@
 ///작성자 조현우
 
 using UnityEngine;
+using System;
+using System.Collections;
 
 namespace DesignStruct {
     public class ObjectPoolItem : MonoBehaviour {
@@ -12,6 +14,15 @@ namespace DesignStruct {
         }
 
         public void ReturnObject() {
+            owner.ReturnObject(this.gameObject);
+        }
+
+        public void DelayReturn(float time) {
+            StartCoroutine(Delay(time));
+        }
+
+        private IEnumerator Delay(float time) {
+            yield return new WaitForSeconds(time);
             owner.ReturnObject(this.gameObject);
         }
     }

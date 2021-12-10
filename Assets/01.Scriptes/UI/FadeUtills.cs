@@ -31,7 +31,7 @@ namespace GameUI {
 
         public void FadeIn(float time, float alhpa) {
             canvasGroup.gameObject.SetActive(true);
-            var tween = LeanTween.alphaCanvas(canvasGroup.GetComponent<CanvasGroup>(), alhpa, time);
+            var tween = LeanTween.alphaCanvas(canvasGroup, alhpa, time);
         }
     }
     public static class Utils {
