@@ -172,13 +172,16 @@ namespace Scene {
         /// 몬스터가 모두 제거 되었나 확인
         /// </summary>
         /// <returns>true = clear, false = not claer </returns>
-        private bool ChkNextStage() {
-            
+        public bool ChkNextStage() {
+            //작성자 장용진 : 2021.12.16 변경
+            //독뎀 사망시 추가 호출
             if(monManager.GetMonsterList().Count <= 0) {
+                NextStage();
                 return true;
             }
             return false;
         }
+                
 
         public void PauseGame() {
             isPause = true;
@@ -350,10 +353,11 @@ namespace Scene {
                 monManager.GetDamage(playerCombo.GetComboDamage(),
                     abilityManager.poisonCount, abilityManager.lightningCount, abilityManager.freezingCount);
                 //Lightning();
-                if(ChkNextStage()) {
-                    NextStage();
-                    return;
-                }
+                //if(ChkNextStage()) {
+                //    NextStage();
+                //    return;
+                //}
+                if (ChkNextStage()) return;
             }
 
             ReturnBlock(0);

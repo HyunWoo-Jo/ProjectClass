@@ -72,10 +72,11 @@ public class MonsterManager : MonoBehaviour
 
     }
 
-    private void MonsterDeath(int index)
+    private void MonsterDeath(int index, bool isNormalDeath = true)
     {
         if (curMonList.Count < index) return;
 
+        //°ñµå Áö±Þ
         int num = Random.Range(0, 2);
         if (num == 0)
         {
@@ -85,7 +86,9 @@ public class MonsterManager : MonoBehaviour
         
         curMonList[index].gameObject.SetActive(false);
         curMonList.RemoveAt(index);
-        SoundManager.Play_EFF("foley_orc_death3"); // ¸ó½ºÅÍ »ç¸Á ½Ã 
+        SoundManager.Play_EFF("foley_orc_death3");
+                
+        if (isNormalDeath == false && curMonList.Count == 0) scene.ChkNextStage();
     }
 
 
@@ -120,7 +123,7 @@ public class MonsterManager : MonoBehaviour
         {
             if (curMonList[i] == mon)
             {
-                MonsterDeath(i);
+                MonsterDeath(i, false);
                 break;
             }
         }
