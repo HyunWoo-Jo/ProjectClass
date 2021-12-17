@@ -58,6 +58,10 @@ public class Player : Singleton<Player>
         if(changeHp != null) changeHp.Invoke();
     }
 
+    public void ResetMaxHp() {
+        currentHp = maxHp;
+    }
+
     public void ResetStats() {
         damage = 100.0f;
         armour = 20.0f;

@@ -75,13 +75,14 @@ namespace Scene {
         #region Unity Method
         private void Awake() {
             Init();
+            Player.instance.ResetMaxHp();
         }
 
         IEnumerator Start() {
             panelController.fadePanel.AddFadeUI().SetAlpha(1f);
             panelController.FadeOut(1f, 0);
             isPause = true;
-            yield return new WaitForSeconds(1.5f);
+            yield return new WaitForSeconds(1f);
             rouletteController.Roulette();
         }
 
