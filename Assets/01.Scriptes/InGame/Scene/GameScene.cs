@@ -157,7 +157,8 @@ namespace Scene {
         }
 
         private void NextStage() {
-            currentStage++;
+            GameManager.instance.SaveClearStage(currentStage); //작성자 장용진 : 2021.12.17 추가
+            currentStage++;            
             ShowAndSetStageUI();
             ReturnBlock();
             SoundManager.Play_EFF("Footsteps_MetalV1_Walk_03");

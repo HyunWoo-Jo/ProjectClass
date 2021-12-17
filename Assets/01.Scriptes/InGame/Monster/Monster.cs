@@ -39,6 +39,11 @@ public class Monster : MonoBehaviour
     private int skChecker = 0;
     private bool isPause = false;
     private Color defColor = Color.white;
+    private bool isAlive = false;
+
+    //Atk moving
+    private Vector3 defPos;
+    private Vector3 moveScale = new Vector3(0, -30f, 0);
     
     //poison
     private bool isPosion = false;
@@ -49,10 +54,16 @@ public class Monster : MonoBehaviour
     private bool isFreezing = false;
     private float reFreezTimer = 0f;
 
+    private void Awake()
+    {
+        defPos = monSprite.transform.localPosition;
+    }
+
     // Update is called once per frame
     void Update()
     {
         if (isPause) return;
+        if (isAlive == false) return;
 
         if (isPosion)
         {
@@ -69,14 +80,22 @@ public class Monster : MonoBehaviour
 
         status.atkTimer -= Time.deltaTime;
         if(status.atkTimer <= float.Epsilon)
-        {            
+        {
+            StartCoroutine(AtkMoving());
             Attack();
             status.atkTimer = status.atkSpeed;
         }
 
         ChangeTimerUI();                
     }
-        
+    
+    private IEnumerator AtkMoving()
+    {
+        monSprite.transform.localPosition = defPos + moveScale;
+        yield return new WaitForSeconds(0.1f);
+        monSprite.transform.localPosition = defPos;
+    } 
+
 
     public void SetPause(bool b)
     {
@@ -128,15 +147,28 @@ public class Monster : MonoBehaviour
         skChecker = 0;
         isPosion = false;
         monSprite.color = Color.white;
+        monSprite.transform.localPosition = defPos;
         defColor = Color.white;
         isFreezing = false;
         reFreezTimer = 0f;
+        isAlive = true;
 
         ChangeHpBar();
         ChangeTimerUI();
     }
 
-    public bool GetDamage(float atk)
+    private bool CheckAlive()
+    {
+        if (status.hp <= float.Epsilon)
+        {
+            isAlive = false;
+            return false;
+        }            
+        else
+            return true;
+    }
+
+    public bool GetNormalDamage(float atk)
     {
         float curDamage = atk - status.defend;
         if (curDamage <= 0f) curDamage = 1f;
@@ -145,10 +177,7 @@ public class Monster : MonoBehaviour
         ChangeHpBar();
         StartCoroutine(DamagedEfx(DamagedKind.Normal, 0.2f));
 
-        if (status.hp <= float.Epsilon)
-            return false;
-        else
-            return true;        
+        return CheckAlive();
     }
 
     public void GetPoisonStatus(float atk, int posionCount)
@@ -171,7 +200,7 @@ public class Monster : MonoBehaviour
         ChangeHpBar();        
         StartCoroutine(DamagedEfx(DamagedKind.Posion, 0.2f));
 
-        if (status.hp <= float.Epsilon)
+        if (CheckAlive() == false)
             manager.DieByElse(this);
     }
 
@@ -195,34 +224,39 @@ public class Monster : MonoBehaviour
         ChangeHpBar();
         StartCoroutine(DamagedEfx(DamagedKind.Lightning, 0.2f));
 
-        if (status.hp <= float.Epsilon)
+        if (CheckAlive() == false)
             manager.DieByElse(this);
     }
 
     private IEnumerator DamagedEfx(DamagedKind kind, float time)
     {
-        switch (kind)
+        if (isAlive)
         {
-            case DamagedKind.Normal: monSprite.color = Color.red; break;
-            case DamagedKind.Posion: monSprite.color = Color.green; break;
-            case DamagedKind.Lightning: monSprite.color = Color.yellow; break;
-            case DamagedKind.Freezing:
-                monSprite.color = Color.blue;
-                defColor = Color.blue;
-                break;
-            default: break;
-        }
+            switch (kind)
+            {
+                case DamagedKind.Normal: monSprite.color = Color.red; break;
+                case DamagedKind.Posion: monSprite.color = Color.green; break;
+                case DamagedKind.Lightning: monSprite.color = Color.yellow; break;
+                case DamagedKind.Freezing:
+                    monSprite.color = Color.blue;
+                    defColor = Color.blue;
+                    break;
+                default: break;
+            }
+        }        
         yield return new WaitForSeconds(time);
-
-        switch (kind)
+        if (isAlive)
         {
-            case DamagedKind.Freezing:
-                defColor = Color.white;
-                isFreezing = false;
-                break;
-            default: break;
-        }
-        monSprite.color = defColor;
+            switch (kind)
+            {
+                case DamagedKind.Freezing:
+                    defColor = Color.white;
+                    isFreezing = false;
+                    break;
+                default: break;
+            }
+            monSprite.color = defColor;
+        }        
     }
 
     private void ChangeHpBar()
@@ -240,6 +274,24 @@ public class Monster : MonoBehaviour
 
         float percent = status.atkTimer / status.atkSpeed;
         timerBar.fillAmount = percent;
+    }
+
+    public void DyingAction()
+    {
+        monSprite.color = Color.white;
+        StartCoroutine(DyingAlpha());
+    }
+
+    private IEnumerator DyingAlpha()
+    {
+        while(monSprite.color.a > 0f)
+        {
+            Color c = monSprite.color;
+            c.a -= 0.1f;
+            monSprite.color = c;
+            yield return new WaitForSeconds(0.1f);
+        }
+        this.gameObject.SetActive(false);
     }
 
 }

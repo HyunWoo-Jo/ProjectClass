@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 using GameUI;
 namespace GameUI.Controller {
     public class HomeController : MonoBehaviour {
@@ -29,12 +30,36 @@ namespace GameUI.Controller {
 
         [SerializeField]
         private GameObject fadePanel;
+
+        //작성자 장용진 : 2021.12.17 추가
+        [SerializeField]
+        private Text maxClearText;
+        [SerializeField]
+        private List<Image> btnImageList;
+
         private void Awake() {
             currentPopup = dungeonsPanel;
         }
 
+        private void Start()
+        {
+            maxClearText.text = GameManager.instance.maxClearStage.ToString(); //작성자 장용진 : 2021.12.17 추가
+        }
+
+        private void ChangeBtnAlpha(GameObject obj)
+        {//작성자 장용진 : 2021.12.17 추가
+            for (int i = 0; i < btnImageList.Count; i++)
+            {
+                Color c = btnImageList[i].color;
+                if (btnImageList[i].gameObject == obj) c.a = 0.3f;
+                else c.a = 1f;
+                btnImageList[i].color = c;
+            }
+        }
+
         public void OnOpenDungeon(GameObject obj) {
             if(currentState != UI_Type.Home && !isAction) {
+                ChangeBtnAlpha(obj);//작성자 장용진 : 2021.12.17 추가
                 isAction = true;
                 SoundManager.Play_EFF("Button");
                 currentPopup.Add_UI_Animation().Play(UI_Animation_Type.ScrollRightFromCenter, 0.5f);
@@ -48,6 +73,7 @@ namespace GameUI.Controller {
         }
         public void OnOpenReinforce(GameObject obj) {
             if(currentState != UI_Type.Reinforce && !isAction) {
+                ChangeBtnAlpha(obj);//작성자 장용진 : 2021.12.17 추가
                 reinforcementsPanel.SetActive(true);
                 isAction = true;
                 SoundManager.Play_EFF("Button");

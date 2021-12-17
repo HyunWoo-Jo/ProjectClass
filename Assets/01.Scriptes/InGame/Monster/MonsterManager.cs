@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using Scene;
 
 public class MonsterManager : MonoBehaviour
@@ -29,8 +30,29 @@ public class MonsterManager : MonoBehaviour
     public Transform blockTarget;
     public FX_Manager fxManager;
 
+    public Image playerHurtEfxPanel;
+
     private int stage = 0;
     private List<Monster> curMonList = new List<Monster>();
+    private float pHurtPanelAlpha = 0f;
+    
+    private void Update()
+    {
+        if (pHurtPanelAlpha > 0f)
+        {
+            ChangePlayerHurtPanelColor(-1f);
+        }
+    }
+
+    private void ChangePlayerHurtPanelColor(float num)
+    {
+        pHurtPanelAlpha += num;
+        if (pHurtPanelAlpha < 0f) pHurtPanelAlpha = 0f;
+
+        Color c = playerHurtEfxPanel.color;
+        c.a = pHurtPanelAlpha / 255f;
+        playerHurtEfxPanel.color = c;
+    }
 
 
     private void SetupStageMonsters()
@@ -83,8 +105,8 @@ public class MonsterManager : MonoBehaviour
             fxManager.CoinFx(curMonList[index].transform);
             GameManager.instance.gold.AddGold(500);
         }
-        
-        curMonList[index].gameObject.SetActive(false);
+
+        curMonList[index].DyingAction();
         curMonList.RemoveAt(index);
         SoundManager.Play_EFF("foley_orc_death3");
                 
@@ -96,7 +118,7 @@ public class MonsterManager : MonoBehaviour
     {
         if (curMonList.Count == 0) return;
 
-        bool isAlive = curMonList[0].GetDamage(atk);
+        bool isAlive = curMonList[0].GetNormalDamage(atk);
         fxManager.AtkFx(curMonList[0].transform);
 
         if (poisonCount > 0) curMonList[0].GetPoisonStatus(atk, poisonCount);
@@ -141,6 +163,7 @@ public class MonsterManager : MonoBehaviour
     
     public void AttakToPlayer(float atk, float defendBreak)
     {
+        pHurtPanelAlpha = 100f;
         pCont.DamageByMonster(atk, defendBreak);
     }
 
