@@ -47,7 +47,7 @@ namespace GameUI.Controller {
             anim = canvasGroup.GetComponent<Animator>();
         }
         public void Roulette() {
-            scene.PauseGame();
+            //scene.PauseGame();
             isSelected = false;
             temAudio = SoundManager.Play_EFF("R_S");
             canvasGroup.gameObject.SetActive(true);
@@ -73,6 +73,10 @@ namespace GameUI.Controller {
         private IEnumerator MoveAllLine() {
             bool isEnd = false;
             while(!isEnd) {
+                if(GameManager.instance.isPause) {
+                    yield return null;
+                    continue;
+                }
                 for(int i =0; i < 3; i++) {
                     if(lineObjList[i][lineObjList[i].Count - 1].transform.localPosition.y > 0) {
                         for(int y = 0; y < lineObjList[i].Count; y++) {
@@ -115,7 +119,7 @@ namespace GameUI.Controller {
                     temAudio.Stop();
                     temAudio = null;
                 }
-                scene.RestartGame();
+                //scene.RestartGame();
                 obj.Add_UI_Animation().Click();
                 abilityManager.AddAbility(lineList[index][lineList[index].Count - 1]);
                 anim.SetTrigger("AlphaDown");

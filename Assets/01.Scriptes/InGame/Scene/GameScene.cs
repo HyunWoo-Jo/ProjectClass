@@ -73,12 +73,12 @@ namespace Scene {
         private void Awake() {
             Init();
             Player.instance.ResetMaxHp();
+            GameManager.instance.isPause = false;
         }
 
         IEnumerator Start() {
             panelController.fadePanel.AddFadeUI().SetAlpha(1f);
             panelController.FadeOut(1f, 0);
-            GameManager.instance.isPause = true;
             yield return new WaitForSeconds(1f);
             rouletteController.Roulette();
         }
