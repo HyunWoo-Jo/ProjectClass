@@ -58,7 +58,7 @@ public class AbilityManager : MonoBehaviour
             case AbilityType.Recovery1:
             case AbilityType.Recovery2:
             case AbilityType.Recovery3:
-                Player.instance.CurrentHp += Player.instance.MaxHp * ((abill.increasedAmount * 0.01f) +1);
+                Player.instance.CurrentHp += Player.instance.MaxHp * (abill.increasedAmount * 0.01f);
                 break;
         }
 

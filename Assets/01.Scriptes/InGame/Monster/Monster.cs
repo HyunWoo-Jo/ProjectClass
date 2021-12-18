@@ -172,11 +172,11 @@ public class Monster : MonoBehaviour
     {
         float curDamage = atk - status.defend;
         if (curDamage <= 0f) curDamage = 1f;
-
+        Player.instance.Absorb(curDamage);
         status.hp -= curDamage;
         ChangeHpBar();
         StartCoroutine(DamagedEfx(DamagedKind.Normal, 0.2f));
-
+        //조현우 12.18 추가
         return CheckAlive();
     }
 
