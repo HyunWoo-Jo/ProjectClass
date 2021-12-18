@@ -8,7 +8,8 @@ public class GameManager : Singleton<GameManager>
 {
     public Gold gold = new Gold();
     [HideInInspector] public int maxClearStage;
-
+    public bool isPause = false;
+    public bool isAction = false;
     protected override void Awake() {
         base.Awake();
         gold.Load();

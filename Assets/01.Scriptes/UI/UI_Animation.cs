@@ -33,6 +33,7 @@ namespace GameUI {
         public void Play(UI_Animation_Type type, float time , Action action) {
             LTDescr tween = null;
             Vector3 target;
+            GameManager.instance.isAction = true;
             switch(type) {
                 case UI_Animation_Type.ScaleUp:
                     this.gameObject.transform.localScale = Vector3.zero;
@@ -86,6 +87,7 @@ namespace GameUI {
                     break;
             }
             if(tween == null) return;
+            tween.setOnComplete(() => { GameManager.instance.isAction = false; });
             if(action != null) {
                 tween.setOnComplete(action);
             }

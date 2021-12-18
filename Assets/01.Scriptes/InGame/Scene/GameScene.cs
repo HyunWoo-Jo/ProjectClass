@@ -49,9 +49,6 @@ namespace Scene {
         [SerializeField]
         private Transform blockTarget;
 
-        [HideInInspector]
-        public bool isPause = false;
-
         private bool isLose = false;
         private int currentStage = 1; // 임시
         private float blockDistance = 1.0f;
@@ -81,16 +78,16 @@ namespace Scene {
         IEnumerator Start() {
             panelController.fadePanel.AddFadeUI().SetAlpha(1f);
             panelController.FadeOut(1f, 0);
-            isPause = true;
+            GameManager.instance.isPause = true;
             yield return new WaitForSeconds(1f);
             rouletteController.Roulette();
         }
-
-#if UNITY_EDITOR
+        private bool isBackKey = false;
         /// <summary>
         /// Text Cord
         /// </summary>
         private void Update() {
+#if UNITY_EDITOR
             if(Input.GetKeyDown(KeyCode.LeftArrow)) {
                 LeftButton();
             }
@@ -100,8 +97,21 @@ namespace Scene {
             if(Input.GetKeyDown(KeyCode.DownArrow)) {
                 CenterButton();
             }
-        }
 #endif
+            if(GameManager.instance.isAction) return;
+            if(Input.GetKeyDown(KeyCode.Escape)) {
+                if(isBackKey) {
+                    isBackKey = false;
+                    RestartGame();
+                    buttonController.OnRestartGame();
+                } else {
+                    isBackKey = true;
+                    PauseGame();
+                    buttonController.OnPauseGame();
+                }
+            }
+        }
+
         #endregion
 
         public IEnumerator TestAddButton() {
@@ -186,20 +196,22 @@ namespace Scene {
                 
 
         public void PauseGame() {
-            isPause = true;
+            isBackKey = true;
+            GameManager.instance.isPause = true;
             TweenManager.Pause();
-            monManager.SetPause(isPause);
+            monManager.SetPause(GameManager.instance.isPause);
         }
         
         public void RestartGame() {
-            isPause = false;
+            isBackKey = false;
+            GameManager.instance.isPause = false;
             TweenManager.Resume();
-            monManager.SetPause(isPause);
+            monManager.SetPause(GameManager.instance.isPause);
         }
 
         public void GameOver() {
-            isPause = true;
-            monManager.SetPause(isPause);
+            GameManager.instance.isPause = true;
+            monManager.SetPause(GameManager.instance.isPause);
             if (!isLose) {
                 isLose = true;
                 TweenManager.Pause();
@@ -306,7 +318,7 @@ namespace Scene {
         /// 왼쪽 버튼 클릭 로직
         /// </summary>
         private void LeftButton() {
-            if (isPause) return;
+            if (GameManager.instance.isPause) return;
             if (blockListInField.Count == 0) return;
             SoundManager.Play_EFF("BlockButton");
             if (blockListInField[0].direction.Equals(BlockDirection.LEFT)) {
@@ -321,7 +333,7 @@ namespace Scene {
         /// 오른쪽 버튼 클릭 로직
         /// </summary>
         private void RightButton() {
-            if (isPause) return;
+            if (GameManager.instance.isPause) return;
             if (blockListInField.Count == 0) return;
             SoundManager.Play_EFF("BlockButton");
             if (blockListInField[0].direction.Equals(BlockDirection.RIGHT)) {
@@ -333,7 +345,7 @@ namespace Scene {
         }
 
         private void CenterButton() {
-            if(isPause) return;
+            if(GameManager.instance.isPause) return;
             if(blockListInField.Count == 0) return;
             SoundManager.Play_EFF("BlockButton");
             if(blockListInField[0].direction.Equals(BlockDirection.Center)) {
@@ -373,7 +385,7 @@ namespace Scene {
         /// </summary>
         private void Fail() {
             playerCombo.ResetCombo();
-            Player.instance.CurrentHp -= 50.0f; // 임시 테스트용 코드
+            Player.instance.CurrentHp -= Player.instance.MaxHp * 0.05f;
             SoundManager.instance.PlayEFF("Hit_Player");
         }
         #endregion
