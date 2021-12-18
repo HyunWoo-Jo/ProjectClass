@@ -170,12 +170,13 @@ namespace Scene {
         private void NextStage() {
             GameManager.instance.SaveClearStage(currentStage); //작성자 장용진 : 2021.12.17 추가
             currentStage++;            
-            ShowAndSetStageUI();
+            //ShowAndSetStageUI();
             ReturnBlock();
             SoundManager.Play_EFF("Footsteps_MetalV1_Walk_03");
             TweenManager.Add(
                 LeanTween.delayedCall(2f, () => {
                     ShowAndSetStageUI();
+                    Player.instance.RecoverHp();
                     rouletteController.Roulette();
                 }
                 ));
