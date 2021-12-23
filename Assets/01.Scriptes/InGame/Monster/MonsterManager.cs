@@ -35,12 +35,33 @@ public class MonsterManager : MonoBehaviour
     private int stage = 0;
     private List<Monster> curMonList = new List<Monster>();
     private float pHurtPanelAlpha = 0f;
+
+    private List<Monster> deathMonList = new List<Monster>();
     
     private void Update()
     {
         if (pHurtPanelAlpha > 0f)
         {
             ChangePlayerHurtPanelColor(-1f);
+        }
+
+        if (deathMonList.Count != 0)
+        {
+            for(int i = 0; i < deathMonList.Count; i++)
+            {
+                for(int j = 0; j < curMonList.Count; j++)
+                {
+                    if (curMonList[j] == deathMonList[i])
+                    {
+                        curMonList[j].DyingAction();
+                        curMonList.RemoveAt(j);
+                        SoundManager.Play_EFF("foley_orc_death3");
+                        break;
+                    }
+                }
+            }
+            scene.ChkNextStage();
+            deathMonList.Clear();
         }
     }
 
@@ -94,7 +115,7 @@ public class MonsterManager : MonoBehaviour
 
     }
 
-    private void MonsterDeath(int index, bool isNormalDeath = true)
+    private void MonsterDeath(int index)
     {
         if (curMonList.Count < index) return;
 
@@ -106,11 +127,12 @@ public class MonsterManager : MonoBehaviour
             GameManager.instance.gold.AddGold(500);
         }
 
-        curMonList[index].DyingAction();
-        curMonList.RemoveAt(index);
-        SoundManager.Play_EFF("foley_orc_death3");
+        deathMonList.Add(curMonList[index]);
+        //curMonList[index].DyingAction();
+        //curMonList.RemoveAt(index);
+        //SoundManager.Play_EFF("foley_orc_death3");
                 
-        if (isNormalDeath == false && curMonList.Count == 0) scene.ChkNextStage();
+        //if (isNormalDeath == false && curMonList.Count == 0) scene.ChkNextStage();
     }
 
 
@@ -123,19 +145,16 @@ public class MonsterManager : MonoBehaviour
 
         if (poisonCount > 0) curMonList[0].GetPoisonStatus(atk, poisonCount);
         if (freezingCount > 0) curMonList[0].GetFreezStatus(freezingCount);
-        if (lightningCount > 0 && curMonList.Count > 1)
+        if (lightningCount > 0)
         {
-            for (int i = 1; i < curMonList.Count; i++)
+            for (int i = 1;i < curMonList.Count; i++)
             {
-                curMonList[i].GetLightningDamage(atk, lightningCount);
                 fxManager.Lightning(blockTarget, curMonList[i].transform);
+                curMonList[i].GetLightningDamage(atk, lightningCount);
             }
         }
 
-        if (isAlive == false)
-        {
-            MonsterDeath(0);
-        }
+        if (isAlive == false) MonsterDeath(0);
     }
 
     public void DieByElse(Monster mon)
@@ -145,7 +164,7 @@ public class MonsterManager : MonoBehaviour
         {
             if (curMonList[i] == mon)
             {
-                MonsterDeath(i, false);
+                MonsterDeath(i);
                 break;
             }
         }
